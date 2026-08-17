@@ -3,8 +3,37 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { signOut } from '../api/auth.js'
 import { fetchStudySessions } from '../api/sessions.js'
 import { fetchCurrentUser } from '../api/user.js'
-import { groupSessionsByRecency } from '../features/sessions/grouping.js'
+import { sortSessionsByRecent } from '../features/sessions/ordering.js'
 import styles from './Sidebar.module.css'
+
+/* 목록이 날짜로 묶이지 않으므로 줄마다 시작일을 적는다. */
+function formatStartedAt(isoDateTime) {
+  const date = new Date(isoDateTime)
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${date.getFullYear()}.${month}.${day}`
+}
+
+/* 줄 왼쪽에 붙는 대화 표시. 아이콘이 하나뿐이라 별도 파일로 빼지 않는다. */
+function ThreadMark() {
+  return (
+    <svg
+      className={styles.mark}
+      viewBox="0 0 16 16"
+      width="16"
+      height="16"
+      aria-hidden="true"
+    >
+      <path
+        d="M2.5 3.5h11v7h-6l-3.5 3v-3h-1.5z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 export default function Sidebar({ onNavigate }) {
   const navigate = useNavigate()
@@ -21,7 +50,7 @@ export default function Sidebar({ onNavigate }) {
     signOut().then(() => navigate('/login', { replace: true }))
   }
 
-  const groups = sessions === null ? [] : groupSessionsByRecency(sessions, new Date())
+  const ordered = sessions === null ? [] : sortSessionsByRecent(sessions)
 
   return (
     <div className={styles.sidebar}>
@@ -35,36 +64,35 @@ export default function Sidebar({ onNavigate }) {
       </NavLink>
 
       <NavLink className={styles.analysis} to="/dashboard" onClick={onNavigate}>
-        결과 분석
+        모의고사 분석
       </NavLink>
 
       <nav className={styles.history} aria-label="학습 기록">
         {sessions === null ? (
           <p className={styles.placeholder}>기록을 불러오는 중입니다.</p>
-        ) : groups.length === 0 ? (
+        ) : ordered.length === 0 ? (
           <p className={styles.placeholder}>
             아직 학습 기록이 없습니다. 첫 문제를 풀면 여기에 쌓입니다.
           </p>
         ) : (
-          groups.map((group) => (
-            <section key={group.label} className={styles.group}>
-              <h2 className={styles.groupLabel}>{group.label}</h2>
-              <ul className={styles.list}>
-                {group.sessions.map((session) => (
-                  <li key={session.id}>
-                    <NavLink
-                      className={styles.item}
-                      to={`/study?cert=${session.certCode}`}
-                      onClick={onNavigate}
-                    >
-                      <span className={styles.itemTitle}>{session.title}</span>
-                      <span className={styles.itemMeta}>{session.questionCount}문제</span>
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))
+          <ul className={styles.list}>
+            {ordered.map((session) => (
+              <li key={session.id}>
+                <NavLink
+                  className={styles.item}
+                  to={`/study?cert=${session.certCode}`}
+                  onClick={onNavigate}
+                >
+                  <ThreadMark />
+                  <span className={styles.itemTitle}>{session.title}</span>
+                  <span className={styles.itemMeta}>
+                    <span>{session.questionCount}문제</span>
+                    <span>{formatStartedAt(session.startedAt)}</span>
+                  </span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
         )}
       </nav>
 

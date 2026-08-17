@@ -1,6 +1,5 @@
+import { isWeakDomain } from '../features/analytics/stats.js'
 import styles from './DomainRateList.module.css'
-
-const WEAK_THRESHOLD = 0.5
 
 function toPercent(rate) {
   return `${Math.round(rate * 100)}%`
@@ -11,7 +10,7 @@ export default function DomainRateList({ domains }) {
   return (
     <ul className={styles.domains}>
       {domains.map((domain) => {
-        const isWeak = domain.correctRate < WEAK_THRESHOLD
+        const isWeak = isWeakDomain(domain.correctRate)
 
         return (
           <li key={domain.name} className={styles.domain}>
@@ -19,7 +18,9 @@ export default function DomainRateList({ domains }) {
               {domain.name}
               {isWeak ? <span className={styles.weakTag}>취약</span> : null}
             </span>
-            <span className={styles.rate}>{toPercent(domain.correctRate)}</span>
+            <span className={styles.rate} data-weak={isWeak}>
+              {toPercent(domain.correctRate)}
+            </span>
             <span
               className={styles.bar}
               data-weak={isWeak}

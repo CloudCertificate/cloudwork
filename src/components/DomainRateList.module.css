@@ -11,7 +11,7 @@
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--space-1);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 .name {
@@ -28,8 +28,15 @@
   color: var(--color-wrong);
 }
 
+/* 막대와 같은 기준으로 색을 입힌다 — 회색이면 막대만 눈에 들어온다 */
 .rate {
-  color: var(--color-text-muted);
+  color: var(--color-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rate[data-weak='true'] {
+  color: var(--color-wrong);
 }
 
 .bar {

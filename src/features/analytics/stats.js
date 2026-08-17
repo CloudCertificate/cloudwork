@@ -58,6 +58,27 @@ export function probabilitySeries(values, target) {
   return values.map((_, index) => probabilityOfReaching(values.slice(0, index + 1), target))
 }
 
+/* 취약 판정. 유형별 정답률 카드와 자주 표시한 유형 카드가 같은 기준을 써야 한다. */
+export const WEAK_CORRECT_RATE = 0.5
+
+export function isWeakDomain(correctRate) {
+  return correctRate < WEAK_CORRECT_RATE
+}
+
+/*
+ * 합격률을 세 등급으로 나눈다. 화면은 등급 이름만 받고 색은 CSS가 고른다.
+ * 확률(0~1)이 아니라 화면에 찍히는 정수 퍼센트를 받는다 — 0.404는 40%로 보이는데
+ * 확률로 판정하면 경계 바로 위 등급이 나와 표시값과 색이 어긋난다.
+ */
+export const FORECAST_LOW_MAX_PERCENT = 40
+export const FORECAST_MID_MAX_PERCENT = 60
+
+export function forecastLevel(percent) {
+  if (percent <= FORECAST_LOW_MAX_PERCENT) return 'low'
+  if (percent <= FORECAST_MID_MAX_PERCENT) return 'mid'
+  return 'high'
+}
+
 export function probabilityOfReaching(values, target) {
   if (values.length < 2) return null
 

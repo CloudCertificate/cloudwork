@@ -10,8 +10,8 @@ const REPLY_DELAY_MS = 700
 
 const FOLLOW_UPS = [
   '보기를 지울 때는 요구사항에 없는 조건을 끌어들이는 선택지부터 걸러 보세요.',
-  '헷갈리는 지점이 반복되고 있습니다. 공식 문서의 "제한 사항"만 훑어도 오답 보기의 절반이 걸러집니다.',
-  '같은 함정이 시험에도 자주 나옵니다. 서비스 이름보다 제약 조건을 먼저 읽어 보세요.',
+  '헷갈리는 지점이 반복되고 있어요. 공식 문서에서 "제한 사항"만 훑어도 오답 보기의 절반은 걸러져요.',
+  '같은 함정이 시험에도 자주 나와요. 서비스 이름보다 제약 조건을 먼저 읽어 보세요.',
 ]
 
 /* 채점 결과를 받아 반응 문장을 만든다. 나중에 이 자리가 LLM 호출로 바뀐다. */
@@ -29,16 +29,17 @@ export function buildGradeReply({
     .join('\n')
 
   if (retry) {
-    return correct ? `이번엔 맞았습니다. ${correctReason}` : `아직 아닙니다. ${pickedReason}`
+    return correct ? `이번엔 맞았어요! ${correctReason}` : `아직 아니에요. ${pickedReason}`
   }
 
   if (correct) {
-    return `정답입니다.\n${correctReason}\n\n왜 이 답을 골랐는지 말해 주시면 더 짚어 드릴게요.`
+    return `정답이에요!\n${correctReason}\n\n왜 이 답을 골랐는지 말해주시면 더 짚어드릴게요.`
   }
 
+  // 보기 기호(A~E)는 받침이 없어 '예요'로 붙는다
   return (
-    `아쉽네요. 정답은 ${correctMarkers}입니다.\n${correctReason}\n\n` +
-    `고르신 답은 이렇습니다.\n${pickedReason}\n\n왜 그 답을 고르셨나요?`
+    `아, 아쉬워요. 정답은 ${correctMarkers}예요.\n${correctReason}\n\n` +
+    `고르신 답은 이래요.\n${pickedReason}\n\n왜 그 답을 고르셨어요?`
   )
 }
 

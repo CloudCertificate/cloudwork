@@ -74,13 +74,13 @@ export default function StudyPage() {
       setQuestions(pool)
 
       if (isReview) {
-        appendText('ai', '모의고사에서 봤던 문제입니다. 다시 한번 풀어 볼까요?')
+        appendText('ai', '모의고사에서 봤던 문제예요. 다시 한번 풀어 볼까요?')
       } else if (domain) {
-        appendText('ai', `${domain} 문제만 골라 드릴게요.`)
+        appendText('ai', `${domain} 문제만 골라드릴게요.`)
       }
 
       if (pool.length === 0) {
-        appendText('ai', '아직 이 조건에 맞는 문제가 없습니다. 다른 유형을 골라 보세요.')
+        appendText('ai', '아직 이 조건에 맞는 문제가 없어요. 다른 유형을 골라 보세요.')
       } else {
         appendQuestion(0, 1)
       }
@@ -167,7 +167,7 @@ export default function StudyPage() {
     if (!retry && askedCount >= SESSION_QUESTION_LIMIT) {
       appendText(
         'ai',
-        `오늘 ${SESSION_QUESTION_LIMIT}문제를 풀었습니다. 여기서 마무리할까요?`,
+        `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`,
       )
     }
   }
@@ -178,7 +178,7 @@ export default function StudyPage() {
         item.id === currentQuestion.id ? { ...item, locked: false } : item,
       ),
     )
-    appendText('ai', '다시 골라 보세요. 기록에는 첫 답만 남습니다.', { retryPrompt: true })
+    appendText('ai', '다시 골라 보세요. 기록에는 첫 답만 남아요.', { retryPrompt: true })
   }
 
   /* 재선택 안내에 답 대신 채팅을 하면 안 고르겠다는 뜻이다 — 안내를 걷고 보기를 다시 잠근다. */
@@ -286,7 +286,7 @@ export default function StudyPage() {
 
           {waiting ? (
             <li className={styles.waiting}>
-              <span className={styles.waitingLabel}>답을 쓰는 중입니다</span>
+              <span className={styles.waitingLabel}>답을 쓰는 중이에요</span>
               <span className={styles.dots} aria-hidden="true">
                 <span />
                 <span />

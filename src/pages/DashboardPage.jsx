@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { fetchExamHistory } from '../api/analytics.js'
 import { MAX_SCORE, PASS_SCORE, hasReachedPassScore } from '../features/exam/score.js'
 import {
+  forecastLevel,
+  isWeakDomain,
   mean,
   probabilityOfReaching,
   probabilitySeries,
@@ -47,6 +49,8 @@ export default function DashboardPage() {
   }
 
   const probability = probabilityOfReaching(scores, PASS_SCORE)
+  // 표시값과 등급색이 같은 수를 보도록 여기서 한 번만 반올림한다
+  const probabilityPercent = probability === null ? null : Math.round(probability * 100)
   const weakest = [...history.domains].sort((a, b) => a.correctRate - b.correctRate)[0]
   const flaggedDomains = [...history.domains].sort(
     (a, b) => b.flaggedCount - a.flaggedCount,
@@ -84,10 +88,17 @@ export default function DashboardPage() {
 
       {/* 제목 대신 aria-label로 이름을 준다 — 축과 범례가 무슨 그래프인지 이미 말한다 */}
       <section className={styles.card} aria-label="회차별 점수 추이">
-        {probability === null ? null : (
+        {probabilityPercent === null ? null : (
           <div className={styles.forecastRow}>
             <p className={styles.forecast}>
-              다음 모의고사 합격률은 <strong>{Math.round(probability * 100)}%</strong>입니다.
+              다음 모의고사 합격률은{' '}
+              <strong
+                className={styles.forecastValue}
+                data-level={forecastLevel(probabilityPercent)}
+              >
+                {probabilityPercent}%
+              </strong>
+              입니다.
             </p>
             <p className={styles.cardNote}>*실제 시험 합격 여부를 예측하지 않습니다.</p>
           </div>
@@ -106,7 +117,7 @@ export default function DashboardPage() {
           <h2 className={styles.cardTitle}>유형별 정답률</h2>
           <DomainRateList domains={history.domains} />
           <p className={styles.cardNote}>
-            {weakest.name}유형이 가장 약하네요.{' '}
+            {weakest.name} 유형이 가장 약하네요.{' '}
             <Link
               className={styles.inlineLink}
               to={`/study?cert=${history.certCode}&domain=${encodeURIComponent(weakest.name)}`}
@@ -123,8 +134,14 @@ export default function DashboardPage() {
               <li key={domain.name} className={styles.flagRow}>
                 <span>{domain.name}</span>
                 <span className={styles.flagMeta}>
-                  정답률 {Math.round(domain.correctRate * 100)}% · 표시{' '}
-                  {domain.flaggedCount}회
+                  정답률{' '}
+                  <strong
+                    className={styles.flagRate}
+                    data-weak={isWeakDomain(domain.correctRate)}
+                  >
+                    {Math.round(domain.correctRate * 100)}%
+                  </strong>{' '}
+                  · 표시 {domain.flaggedCount}회
                 </span>
               </li>
             ))}
