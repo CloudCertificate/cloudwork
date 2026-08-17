@@ -1,0 +1,54 @@
+.domains {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.domain {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* 취약 여부를 색이 아니라 글자로도 알린다 */
+.weakTag {
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-wrong);
+  border-radius: var(--radius-sm);
+  color: var(--color-wrong);
+}
+
+.rate {
+  color: var(--color-text-muted);
+}
+
+.bar {
+  grid-column: 1 / -1;
+  height: 6px;
+  border-radius: var(--radius-sm);
+  background: var(--color-border);
+}
+
+/* --rate는 컴포넌트가 넘기는 수치다(스타일 값이 아니다) */
+.bar::before {
+  content: '';
+  display: block;
+  width: var(--rate);
+  height: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+}
+
+.bar[data-weak='true']::before {
+  background: var(--color-wrong);
+}

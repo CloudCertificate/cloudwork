@@ -1,0 +1,59 @@
+/* 색·간격·타이포의 단일 소스. 화면 CSS는 여기 정의된 var()만 참조한다. */
+
+:root {
+  /* 면 */
+  --color-bg: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-border: #e2e5ea;
+
+  /* 글자 — 흰 배경 대비 text 16:1, text-muted 6.0:1 (WCAG AA 통과) */
+  --color-text: #1a1d21;
+  --color-text-muted: #5b6470;
+  --color-text-on-accent: #ffffff;
+
+  /* 강조·상태 — 흰 글자를 얹는 배경으로 쓴다 */
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-correct: #15803d;
+  --color-wrong: #b91c1c;
+
+  /* 포커스 링. 키보드 이동이 눈에 보여야 한다 */
+  --color-focus: #2563eb;
+  --focus-ring: 0 0 0 3px rgb(37 99 235 / 0.35);
+
+  /* 간격 — 4px 배수 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* 모서리 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* 타이포 */
+  /* 이름은 src/fonts의 @font-face 선언과 정확히 같아야 한다 */
+  --font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Malgun Gothic', sans-serif;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --leading-normal: 1.6;
+
+  /* 그림자 */
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
+
+  /* 레이아웃 */
+  --layout-max-width: 1200px;
+  --transition-fast: 0.15s ease;
+
+  /* 쌓임 순서 */
+  --z-header: 10;
+  --z-modal: 100;
+}

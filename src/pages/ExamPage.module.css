@@ -1,0 +1,179 @@
+/* 시험지(타이머·문제·제출) 한 덩어리 + 그 옆에 답안지 */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  align-items: start;
+  gap: var(--space-4);
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.paper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.sheet {
+  position: sticky;
+  top: var(--space-8);
+  max-height: calc(100vh - var(--space-12) - var(--space-8));
+  overflow-y: auto;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sheet {
+    position: static;
+    max-height: none;
+  }
+}
+
+.loading {
+  max-width: 840px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.timerBar {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.timerLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.timer {
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.timer[data-low='true'] {
+  color: var(--color-wrong);
+}
+
+.timerNote {
+  font-size: var(--text-sm);
+  color: var(--color-wrong);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.move {
+  min-width: 3rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.move:hover:not(:disabled) {
+  border-color: var(--color-accent);
+}
+
+.move:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.flag {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.flag:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+/* 표시된 상태는 테두리와 글자 둘 다로 알린다 */
+.flag[data-flagged='true'] {
+  border-color: var(--color-wrong);
+  color: var(--color-wrong);
+}
+
+/* 미답 경고는 모달로 띄운다 */
+.modal {
+  max-width: 420px;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.modal::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.modalText {
+  margin-bottom: var(--space-6);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.keep {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+/* 되돌릴 수 없는 동작이라 빨간 배경으로 알린다 */
+.danger {
+  padding: var(--space-3) var(--space-6);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-wrong);
+  color: var(--color-text-on-accent);
+}
+
+.danger:hover {
+  filter: brightness(0.92);
+}
+
+.keep:hover {
+  border-color: var(--color-accent);
+}
+
+/* 문제 카드 하단 오른쪽 끝. 이동 버튼은 왼쪽 끝이라 서로 떨어져 있다 */
+.submit {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: var(--space-3) var(--space-6);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  transition: background var(--transition-fast);
+}
+
+.submit:hover {
+  background: var(--color-accent-hover);
+}

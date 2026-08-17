@@ -1,0 +1,151 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-4);
+  border-right: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.logo {
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  padding: var(--space-2);
+}
+
+.newStudy {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.newStudy:hover {
+  background: var(--color-accent-hover);
+}
+
+/* 기록만 스크롤한다 — 새 학습 버튼과 분석 링크는 늘 보인다 */
+.history {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: var(--space-2);
+}
+
+.placeholder {
+  padding: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.group {
+  margin-bottom: var(--space-4);
+}
+
+.groupLabel {
+  padding: 0 var(--space-2);
+  margin-bottom: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.item:hover {
+  background: var(--color-bg);
+}
+
+.itemTitle {
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemMeta {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* 새 학습 시작과 같은 크기, 색만 다르게 */
+.analysis {
+  padding: var(--space-3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.analysis:hover {
+  background: var(--color-surface);
+}
+
+/* 사이드바 맨 아래는 계정 자리다 */
+.account {
+  margin-top: var(--space-2);
+  padding: var(--space-4) 0 var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.accountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.accountName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signOut {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.signOut:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+

@@ -1,0 +1,214 @@
+.page {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+}
+
+.loading {
+  max-width: var(--layout-max-width);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.title {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-2);
+}
+
+.scope {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-8);
+}
+
+.empty {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin: 0 0 var(--space-6);
+}
+
+.kpi {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.kpiLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.kpiValue {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+  margin-bottom: var(--space-6);
+}
+
+.cardTitle {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-4);
+}
+
+.cardNote {
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* 두 카드는 짝으로 읽히므로 높이를 맞춘다 */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.columns .card {
+  margin-bottom: 0;
+}
+
+.attempts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attempt {
+  display: grid;
+  grid-template-columns: 4rem 1fr auto auto auto;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+/* 합격 여부는 색과 함께 글자로도 알린다 */
+.attempt[data-reached='true'] {
+  border-left: 3px solid var(--color-correct);
+}
+
+.attempt[data-reached='false'] {
+  border-left: 3px solid var(--color-wrong);
+}
+
+.attemptOrder {
+  color: var(--color-text-muted);
+}
+
+.attemptDate {
+  color: var(--color-text-muted);
+}
+
+.attemptFlagged {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.attemptScore {
+  font-variant-numeric: tabular-nums;
+}
+
+.attempt[data-reached='true'] .attemptVerdict {
+  color: var(--color-correct);
+}
+
+.attempt[data-reached='false'] .attemptVerdict {
+  color: var(--color-wrong);
+}
+
+.flagList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.flagRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.flagRow:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.flagMeta {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 그래프 위에 얹는 전망 한 줄 */
+.forecastRow {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.forecast {
+  font-size: var(--text-xl);
+}
+
+.forecastRow .cardNote {
+  margin-top: var(--space-1);
+}
+
+.toggleAttempts {
+  width: 100%;
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.toggleAttempts:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.inlineLink,
+.primaryLink {
+  color: var(--color-accent);
+}
+
+.primaryLink {
+  display: inline-block;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  text-decoration: none;
+}
+
+.primaryLink:hover {
+  background: var(--color-accent-hover);
+}

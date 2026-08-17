@@ -1,0 +1,24 @@
+.row {
+  display: flex;
+  max-width: 80%;
+}
+
+.row[data-role='user'] {
+  align-self: flex-end;
+  justify-content: flex-end;
+}
+
+.bubble {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  white-space: pre-wrap;
+}
+
+/* 보낸 쪽은 채운 배경으로, 받은 쪽은 테두리로 구분한다 */
+.bubble[data-role='user'] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
