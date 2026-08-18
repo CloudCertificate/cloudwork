@@ -1,0 +1,131 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+}
+
+/* 채점 후에는 정오답 색이 이겨야 하므로 선택 강조는 default 상태에만 건다 */
+.card[data-status='default']:has(.radio:checked) {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  background: var(--color-surface);
+}
+
+.card:has(.radio:focus-visible) {
+  box-shadow: var(--focus-ring);
+}
+
+.card[data-disabled='true'],
+.card[data-disabled='true']:hover {
+  cursor: not-allowed;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+
+/* 채점 후 상태. 색만으로 알리지 않도록 marker 글자도 함께 바뀐다 */
+.card[data-status='correct'],
+.card[data-status='correct']:hover {
+  border-color: var(--color-correct);
+  box-shadow: inset 0 0 0 1px var(--color-correct);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.card[data-status='wrong'],
+.card[data-status='wrong']:hover {
+  border-color: var(--color-wrong);
+  box-shadow: inset 0 0 0 1px var(--color-wrong);
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/*
+ * 네이티브 입력의 모양만 지우고 요소는 남긴다(키보드 조작은 브라우저가 맡는다).
+ * 고르면 안쪽 점 대신 원 전체를 채운다 — 작은 점을 가운데 두면 소수점 픽셀 위치에 따라
+ * 위아래로 1px씩 흔들려 보인다.
+ */
+.radio {
+  appearance: none;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.2rem 0 0;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-bg);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.radio:checked {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+}
+
+.radio:disabled:not(:checked) {
+  background: var(--color-surface);
+}
+
+.card[data-status='correct'] .radio {
+  border-color: var(--color-correct);
+}
+
+.card[data-status='correct'] .radio:checked {
+  background: var(--color-correct);
+}
+
+.card[data-status='wrong'] .radio {
+  border-color: var(--color-wrong);
+}
+
+.card[data-status='wrong'] .radio:checked {
+  background: var(--color-wrong);
+}
+
+.marker {
+  flex-shrink: 0;
+  width: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.card[data-status='correct'] .marker {
+  color: var(--color-correct);
+}
+
+.card[data-status='wrong'] .marker {
+  color: var(--color-wrong);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: var(--text-lg);
+}
+
+/* 말풍선 안에 들어갈 때는 한 단계 작게 */
+.card[data-compact='true'] {
+  padding: var(--space-3);
+}
+
+.card[data-compact='true'] .label {
+  font-size: var(--text-base);
+}
+
+.description {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
