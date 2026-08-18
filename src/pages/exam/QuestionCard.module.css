@@ -36,3 +36,30 @@
   font-weight: 500;
   margin-bottom: var(--space-6);
 }
+
+/*
+ * 문항이 바뀌면 이동 방향에서 들어온다 — ▶는 오른쪽에서, ◀는 왼쪽에서.
+ * "앞으로 갔다 / 뒤로 왔다"를 알리는 게 목적이라 12px이면 충분하다. 종이 넘김 같은 3D 전환은
+ * 65문항을 연달아 푸는 화면에 맞지 않아 넣지 않았다(2026-08-18).
+ */
+.body {
+  animation: questionIn var(--motion-question) both;
+}
+
+.body[data-direction='back'] {
+  animation-name: questionInBack;
+}
+
+@keyframes questionIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+@keyframes questionInBack {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}

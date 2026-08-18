@@ -32,3 +32,18 @@ button {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+/*
+ * OS에서 "동작 줄이기"를 켠 사용자에게는 전부 끈다 — 전정 장애가 있으면 움직임이 어지럼증을 일으킨다.
+ * 0으로 두지 않고 0.01ms를 주는 이유는 animationend·transitionend를 기다리는 코드가 멈추지 않게 하기 위해서다.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

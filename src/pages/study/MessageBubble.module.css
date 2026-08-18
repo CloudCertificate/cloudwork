@@ -22,3 +22,18 @@
   border-color: var(--color-accent);
   color: var(--color-text-on-accent);
 }
+
+/*
+ * 새 말풍선은 아래에서 올라오며 나타난다. 채팅은 아래로 쌓이니 등장 방향도 아래여야
+ * 시선이 따라간다. transform이라 레이아웃 높이를 건드리지 않아 자동 스크롤 계산과 부딪히지 않는다.
+ */
+.row {
+  animation: bubbleIn var(--motion-enter) both;
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

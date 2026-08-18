@@ -4,6 +4,9 @@
  * (프런트에서 직접 부르지 않는다).
  *
  * 채점은 여기서 하지 않는다 — 정답은 검수를 거쳐 저장된 데이터이고, AI는 그 결과를 설명만 한다.
+ *
+ * 이 파일의 말투는 임시가 아니라 **폐기 예정**이다. 서버가 붙는 1단계에서 buildGradeReply는
+ * 옮기는 게 아니라 지운다 — 말투를 여기와 서버 프롬프트 두 곳에 두면 갈라진다(CLAUDE.md §4).
  */
 
 const REPLY_DELAY_MS = 700
@@ -29,17 +32,17 @@ export function buildGradeReply({
     .join('\n')
 
   if (retry) {
-    return correct ? `이번엔 맞았어요! ${correctReason}` : `아직 아니에요. ${pickedReason}`
+    return correct ? `맞았어요! ${correctReason}` : pickedReason
   }
 
   if (correct) {
-    return `정답이에요!\n${correctReason}\n\n왜 이 답을 골랐는지 말해주시면 더 짚어드릴게요.`
+    return `정답이에요!\n${correctReason}`
   }
 
   // 보기 기호(A~E)는 받침이 없어 '예요'로 붙는다
   return (
-    `아, 아쉬워요. 정답은 ${correctMarkers}예요.\n${correctReason}\n\n` +
-    `고르신 답은 이래요.\n${pickedReason}\n\n왜 그 답을 고르셨어요?`
+    `정답은 ${correctMarkers}예요.\n${correctReason}\n\n` +
+    `고르신 답이 아닌 이유예요.\n${pickedReason}`
   )
 }
 

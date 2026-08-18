@@ -7,7 +7,12 @@
   border-radius: var(--radius-md);
   background: var(--color-bg);
   cursor: pointer;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  /* 채점되면 테두리·링·글자색이 함께 바뀐다. 링이 빠져 있어 색은 번지는데 링만 튀던 걸 맞췄다 */
+  transition:
+    border-color var(--transition-state),
+    box-shadow var(--transition-state),
+    background var(--transition-state),
+    color var(--transition-state);
 }
 
 .card:hover {
@@ -64,7 +69,9 @@
   border: 2px solid var(--color-border);
   border-radius: 50%;
   background: var(--color-bg);
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .radio:checked {

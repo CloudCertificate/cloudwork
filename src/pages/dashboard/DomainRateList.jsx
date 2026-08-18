@@ -1,11 +1,11 @@
-import { isWeakDomain } from '../features/analytics/stats.js'
+import { isWeakDomain } from '../../features/analytics/stats.js'
 import styles from './DomainRateList.module.css'
 
 function toPercent(rate) {
   return `${Math.round(rate * 100)}%`
 }
 
-/* 학습 화면 사이드바와 대시보드가 함께 쓴다. */
+/* 지금은 대시보드만 쓴다. 취약 유형 표시 기준은 stats.js가 소유한다. */
 export default function DomainRateList({ domains }) {
   return (
     <ul className={styles.domains}>

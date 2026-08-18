@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom'
 import AppLayout from './components/AppLayout.jsx'
-import LoginPage from './pages/LoginPage.jsx'
-import StartPage from './pages/StartPage.jsx'
-import StudyPage from './pages/StudyPage.jsx'
-import ExamPage from './pages/ExamPage.jsx'
-import ExamResultPage from './pages/ExamResultPage.jsx'
-import DashboardPage from './pages/DashboardPage.jsx'
+import LoginPage from './pages/login/LoginPage.jsx'
+import StartPage from './pages/start/StartPage.jsx'
+import StudyPage from './pages/study/StudyPage.jsx'
+import ExamPage from './pages/exam/ExamPage.jsx'
+import ExamResultPage from './pages/exam-result/ExamResultPage.jsx'
+import DashboardPage from './pages/dashboard/DashboardPage.jsx'
 
 export default function App() {
   return (

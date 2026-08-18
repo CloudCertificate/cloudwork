@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { fetchQuestions } from '../api/quiz.js'
+import { fetchQuestions } from '../../api/quiz.js'
 import {
   MAX_SCORE,
   PASS_SCORE,
@@ -8,7 +8,8 @@ import {
   hasReachedPassScore,
   isAnswerCorrect,
   toScaledScore,
-} from '../features/exam/score.js'
+} from '../../features/exam/score.js'
+import PageLoading from '../../components/PageLoading.jsx'
 import styles from './ExamResultPage.module.css'
 
 export default function ExamResultPage() {
@@ -34,7 +35,7 @@ export default function ExamResultPage() {
   }
 
   if (questions === null) {
-    return <p className={styles.loading}>채점하는 중입니다.</p>
+    return <PageLoading>채점하는 중입니다.</PageLoading>
   }
 
   const { answers, certCode, flagged = {}, reason } = state
@@ -82,7 +83,9 @@ export default function ExamResultPage() {
                 <span className={styles.itemDomain}>{question.domain}</span>
                 <span className={styles.itemVerdict}>
                   {picked.length > 0 ? (isCorrect ? '정답' : '오답') : '답하지 않음'}
-                  {flagged[question.id] ? <span className={styles.flagTag}>표시함</span> : null}
+                  {flagged[question.id] ? (
+                    <span className={styles.flagTag}>표시함</span>
+                  ) : null}
                 </span>
               </span>
               <Link className={styles.reviewLink} to={`/study?cert=${certCode}&q=${index}`}>

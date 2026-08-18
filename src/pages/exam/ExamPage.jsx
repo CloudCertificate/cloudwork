@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { fetchExamSet } from '../api/exam.js'
-import QuestionCard from '../components/QuestionCard.jsx'
-import ChoiceList from '../components/ChoiceList.jsx'
-import QuestionNav from '../components/QuestionNav.jsx'
+import { fetchExamSet } from '../../api/exam.js'
+import QuestionCard from './QuestionCard.jsx'
+import ChoiceList from '../../components/ChoiceList.jsx'
+import QuestionNav from './QuestionNav.jsx'
+import PageLoading from '../../components/PageLoading.jsx'
 import styles from './ExamPage.module.css'
 
 const LOW_TIME_SECONDS = 60
@@ -21,6 +22,8 @@ export default function ExamPage() {
 
   const [examSet, setExamSet] = useState(null)
   const [index, setIndex] = useState(0)
+  // 문항 전환 애니메이션이 들어오는 쪽. 답안지에서 건너뛸 때도 앞뒤는 정해진다
+  const [direction, setDirection] = useState('forward')
   // { [questionId]: ['a', 'c'] } — 단일 정답 문제도 배열로 다룬다
   const [answers, setAnswers] = useState({})
   // 찍었거나 애매한 문제에 다는 표시. 채점·점수에는 영향을 주지 않는다(CLAUDE.md §5)
@@ -67,7 +70,7 @@ export default function ExamPage() {
   }, [confirming])
 
   if (examSet === null) {
-    return <p className={styles.loading}>모의고사 문제를 불러오는 중입니다.</p>
+    return <PageLoading>모의고사 문제를 불러오는 중입니다.</PageLoading>
   }
 
   const { questions } = examSet
@@ -103,6 +106,11 @@ export default function ExamPage() {
     })
   }
 
+  function moveTo(nextIndex) {
+    setDirection(nextIndex > index ? 'forward' : 'back')
+    setIndex(nextIndex)
+  }
+
   function handleSubmitClick() {
     if (unansweredCount > 0) {
       setConfirming(true)
@@ -127,6 +135,35 @@ export default function ExamPage() {
           total={questions.length}
           domain={question.domain}
           text={question.text}
+          bodyKey={question.id}
+          direction={direction}
+          footer={
+            <div className={styles.actions}>
+              <button
+                className={styles.move}
+                type="button"
+                aria-label="이전 문제"
+                onClick={() => moveTo(index - 1)}
+                disabled={index === 0}
+              >
+                ◀
+              </button>
+              <button
+                className={styles.move}
+                type="button"
+                aria-label="다음 문제"
+                onClick={() => moveTo(index + 1)}
+                disabled={index === questions.length - 1}
+              >
+                ▶
+              </button>
+
+              {/* 이동 버튼과 반대쪽 끝에 둔다 — 옆에 붙어 있으면 잘못 눌러 시험이 끝난다 */}
+              <button className={styles.submit} type="button" onClick={handleSubmitClick}>
+                제출하고 채점하기
+              </button>
+            </div>
+          }
           action={
             <button
               className={styles.flag}
@@ -146,34 +183,7 @@ export default function ExamPage() {
             answerCount={answerCount}
             graded={false}
           />
-
-          <div className={styles.actions}>
-            <button
-              className={styles.move}
-              type="button"
-              aria-label="이전 문제"
-              onClick={() => setIndex(index - 1)}
-              disabled={index === 0}
-            >
-              ◀
-            </button>
-            <button
-              className={styles.move}
-              type="button"
-              aria-label="다음 문제"
-              onClick={() => setIndex(index + 1)}
-              disabled={index === questions.length - 1}
-            >
-              ▶
-            </button>
-
-            {/* 이동 버튼과 반대쪽 끝에 둔다 — 옆에 붙어 있으면 잘못 눌러 시험이 끝난다 */}
-            <button className={styles.submit} type="button" onClick={handleSubmitClick}>
-              제출하고 채점하기
-            </button>
-          </div>
         </QuestionCard>
-
       </div>
 
       {/* 답안지는 문제 카드가 아니라 시험 전체에 딸린 것이라 옆에 세운다.
@@ -184,7 +194,7 @@ export default function ExamPage() {
           answers={answers}
           flagged={flagged}
           currentIndex={index}
-          onMove={setIndex}
+          onMove={moveTo}
         />
       </div>
 
@@ -199,7 +209,11 @@ export default function ExamPage() {
           아직 {unansweredCount}문제가 남았어요. 제출할까요?
         </p>
         <div className={styles.modalActions}>
-          <button className={styles.keep} type="button" onClick={() => setConfirming(false)}>
+          <button
+            className={styles.keep}
+            type="button"
+            onClick={() => setConfirming(false)}
+          >
             이어서 풀기
           </button>
           <button className={styles.danger} type="button" onClick={() => submit('manual')}>

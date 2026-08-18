@@ -1,0 +1,7 @@
+/* 한 줄짜리 안내라 화면별 본문 폭을 따라가지 않는다 — 폭이 화면마다 다르면 글자가 좌우로 튄다 */
+.loading {
+  max-width: var(--layout-width-lg);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-muted);
+}

@@ -23,6 +23,8 @@
   display: none;
 }
 
+/* 900px — 사이드바가 접히는 기준. CSS 변수는 미디어쿼리 조건에 못 쓰므로 토큰이 없다.
+   ExamPage.module.css의 답안지도 같은 값을 쓴다 — 한쪽만 고치면 두 화면이 어긋난다 */
 @media (max-width: 900px) {
   .shell {
     grid-template-columns: minmax(0, 1fr);
@@ -48,7 +50,7 @@
     inset: 0;
     z-index: var(--z-header);
     border: 0;
-    background: rgb(0 0 0 / 0.3);
+    background: var(--color-scrim);
   }
 
   .toggle {
