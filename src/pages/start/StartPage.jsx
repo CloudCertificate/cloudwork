@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchCertifications } from '../api/certifications.js'
-import OptionCard from '../components/OptionCard.jsx'
+import { fetchCertifications } from '../../api/certifications.js'
+import OptionCard from '../../components/OptionCard.jsx'
+import PageLoading from '../../components/PageLoading.jsx'
 import styles from './StartPage.module.css'
 
 const MODES = [
@@ -25,7 +26,7 @@ export default function StartPage() {
   }
 
   if (certifications === null) {
-    return <p className={styles.loading}>자격증 목록을 불러오는 중입니다.</p>
+    return <PageLoading>자격증 목록을 불러오는 중입니다.</PageLoading>
   }
 
   return (

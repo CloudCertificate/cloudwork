@@ -1,14 +1,7 @@
 .page {
-  max-width: 640px;
+  max-width: var(--layout-width-sm);
   margin: 0 auto;
   padding: var(--space-12) var(--space-4);
-}
-
-.loading {
-  max-width: 640px;
-  margin: 0 auto;
-  padding: var(--space-12) var(--space-4);
-  color: var(--color-text-muted);
 }
 
 .title {

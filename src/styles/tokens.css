@@ -17,7 +17,6 @@
   /* KPI 카드. 세 장 모두 같은 색이다 — 지표를 구분하는 색이 아니라 카드 한 벌을 묶는 색이다.
      보라를 피한 이유: 배경·사이드바가 보라 계열이고, 보라는 합격률 상위 등급이 이미 쓴다 */
   --color-kpi: #0f766e;
-  --color-kpi-tint: #e0f2ef;
 
   /* 글자 — 흰 배경 대비 text 16:1, text-muted 6.0:1 (WCAG AA 통과) */
   --color-text: #1a1d21;
@@ -29,6 +28,10 @@
   --color-accent-hover: #1d4ed8;
   --color-correct: #15803d;
   --color-wrong: #b91c1c;
+  /* 정오답을 색만이 아니라 왼쪽 띠로도 알린다. 대시보드 응시 기록·결과 문항 목록·답안지가 같은 굵기를 쓴다 */
+  --border-status: 3px;
+  /* 가림막. 사이드바 서랍과 제출 모달이 같은 값을 쓴다 — 같은 개념인데 0.3/0.4로 갈려 있었다(2026-08-18) */
+  --color-scrim: rgb(0 0 0 / 0.4);
 
   /* 다음 회차 합격률 등급색. 흰 배경 대비 low 6.5:1, mid 4.9:1, high 5.7:1 (WCAG AA 통과) */
   --color-forecast-low: var(--color-wrong);
@@ -55,8 +58,9 @@
 
   /* 타이포 */
   /* 이름은 src/fonts의 @font-face 선언과 정확히 같아야 한다 */
-  --font-sans: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'Malgun Gothic', sans-serif;
+  --font-sans:
+    'Pretendard Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic',
+    sans-serif;
   --text-sm: 0.9375rem;
   --text-base: 1.0625rem;
   --text-lg: 1.1875rem;
@@ -68,10 +72,28 @@
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.04);
 
   /* 레이아웃 */
-  --layout-max-width: 1200px;
+  /* 화면 본문 폭. 화면마다 읽는 양이 달라 네 단계를 쓴다 —
+     xl 대시보드(카드 여러 벌) / lg 문제 읽는 화면 / md 결과지 / sm 고르는 폼 */
+  --layout-width-xl: 1200px;
+  --layout-width-lg: 840px;
+  --layout-width-md: 720px;
+  --layout-width-sm: 640px;
+  /* 화면이 아니라 상자 폭. 로그인 카드와 제출 모달이 쓴다 */
+  --layout-width-box: 420px;
   /* 세션 제목이 잘리지 않는 최소 폭이다 — 좁히려면 .itemTitle 크기부터 줄인다 */
   --layout-sidebar-width: 288px;
+  /*
+   * 동작. fast는 hover처럼 제자리에서 바뀌는 것, state는 채점 색처럼 의미가 바뀌는 것,
+   * enter는 새로 나타나는 것이다. 값을 키우고 싶으면 65문항을 연달아 푸는 장면을 먼저 떠올린다 —
+   * 한 번은 멋있고 열 번째부터는 기다림이다.
+   */
   --transition-fast: 0.15s ease;
+  --transition-state: 0.2s ease;
+  --motion-enter: 0.22s ease-out;
+  /* 문항 전환만 enter보다 길다 — 자리를 옮기는 동작이라 같은 길이면 스치듯 지나간다(2026-08-18 조정) */
+  --motion-question: 0.32s ease-out;
+  /* 막대가 0에서 차오르는 시간. 화면에 들어올 때 한 번만 도니 길어도 반복 부담이 없다 */
+  --motion-bar: 0.7s ease-out;
 
   /* 쌓임 순서 */
   --z-header: 10;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchExamHistory } from '../api/analytics.js'
-import { MAX_SCORE, PASS_SCORE, hasReachedPassScore } from '../features/exam/score.js'
+import { fetchExamHistory } from '../../api/analytics.js'
+import { MAX_SCORE, PASS_SCORE, hasReachedPassScore } from '../../features/exam/score.js'
 import {
   forecastLevel,
   isWeakDomain,
@@ -9,9 +9,10 @@ import {
   probabilityOfReaching,
   probabilitySeries,
   standardDeviation,
-} from '../features/analytics/stats.js'
-import ScoreChart from '../components/ScoreChart.jsx'
-import DomainRateList from '../components/DomainRateList.jsx'
+} from '../../features/analytics/stats.js'
+import ScoreChart from './ScoreChart.jsx'
+import DomainRateList from './DomainRateList.jsx'
+import PageLoading from '../../components/PageLoading.jsx'
 import styles from './DashboardPage.module.css'
 
 const RECENT_ATTEMPT_COUNT = 5
@@ -29,7 +30,7 @@ export default function DashboardPage() {
   }, [])
 
   if (history === null) {
-    return <p className={styles.loading}>기록을 불러오는 중입니다.</p>
+    return <PageLoading>기록을 불러오는 중입니다.</PageLoading>
   }
 
   const scores = history.attempts.map((attempt) => attempt.score)
@@ -67,9 +68,7 @@ export default function DashboardPage() {
   return (
     <main className={styles.page}>
       <h1 className={styles.title}>모의고사 결과 분석</h1>
-      <p className={styles.scope}>
-        모의고사 데이터만 이용됩니다. AI 학습 모드는 제외됩니다.
-      </p>
+      <p className={styles.scope}>모의고사 데이터만 이용됩니다. AI 학습은 제외됩니다.</p>
 
       <dl className={styles.kpis}>
         <div className={styles.kpi}>

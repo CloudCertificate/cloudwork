@@ -1,14 +1,7 @@
 .page {
-  max-width: 720px;
+  max-width: var(--layout-width-md);
   margin: 0 auto;
   padding: var(--space-8) var(--space-6);
-}
-
-.loading {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
-  color: var(--color-text-muted);
 }
 
 .title {
@@ -111,11 +104,11 @@
 }
 
 .item[data-correct='true'] {
-  border-left: 3px solid var(--color-correct);
+  border-left: var(--border-status) solid var(--color-correct);
 }
 
 .item[data-correct='false'] {
-  border-left: 3px solid var(--color-wrong);
+  border-left: var(--border-status) solid var(--color-wrong);
 }
 
 .itemIndex {

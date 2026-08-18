@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { signInWithGoogle } from '../api/auth.js'
+import { signInWithGoogle } from '../../api/auth.js'
 import styles from './LoginPage.module.css'
 
 export default function LoginPage() {
@@ -16,9 +16,7 @@ export default function LoginPage() {
     <main className={styles.page}>
       <div className={styles.card}>
         <h1 className={styles.title}>CloudCertificate</h1>
-        <p className={styles.lead}>
-          AWS 자격증, 틀린 문제부터 AI와 함께 짚어 봅니다.
-        </p>
+        <p className={styles.lead}>AWS 자격증, 틀린 문제부터 AI와 함께 짚어 봅니다.</p>
 
         <div className={styles.providers}>
           <button

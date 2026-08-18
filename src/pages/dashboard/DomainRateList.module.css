@@ -59,3 +59,14 @@
 .bar[data-weak='true']::before {
   background: var(--color-wrong);
 }
+
+/* 화면에 들어올 때 0에서 --rate까지 한 번 차오른다. 값이 목적지라 both로 끝 상태를 유지한다 */
+.bar::before {
+  animation: fillBar var(--motion-bar) both;
+}
+
+@keyframes fillBar {
+  from {
+    width: 0;
+  }
+}

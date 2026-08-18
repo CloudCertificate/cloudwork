@@ -1,4 +1,4 @@
-import { MARKERS } from './ChoiceList.jsx'
+import { MARKERS } from '../../components/ChoiceList.jsx'
 import styles from './QuestionNav.module.css'
 
 /*

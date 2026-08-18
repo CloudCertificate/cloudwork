@@ -1,4 +1,4 @@
-import ChoiceList, { MARKERS } from './ChoiceList.jsx'
+import ChoiceList, { MARKERS } from '../../components/ChoiceList.jsx'
 import styles from './QuestionBubble.module.css'
 
 /*
