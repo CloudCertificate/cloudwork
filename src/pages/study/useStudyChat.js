@@ -9,12 +9,12 @@ const SESSION_QUESTION_LIMIT = 20
 
 /*
  * 학습 화면의 대화 한 벌을 소유한다 — 문제 적재, 말풍선 목록, 채점, 튜터 응답.
- * 화면에서 떼어 둔 이유는 둘이다: 페이지가 렌더만 하게 되고, 흐름 규칙(첫 답만 기록·
- * 버튼은 앱이 제어)이 한 파일에 모인다.
+ * 화면에서 떼어 둔 이유는 둘이다: 페이지가 렌더만 하게 되고, 흐름 규칙(한 문제는 한 번만 답한다·
+ * 다음 문제는 앱이 낸다)이 한 파일에 모인다.
  *
- * 채점은 여기서 `correct` 필드로 판정하고 AI에게는 결과를 사실로 넘긴다(CLAUDE.md §4 ②).
+ * 채점은 여기서 `correct` 필드로 판정하고 AI에게는 결과를 사실로 넘긴다(docs/product.md §2 ②).
  */
-export function useStudyThread({ certCode, domain, reviewIndex }) {
+export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
   const [questions, setQuestions] = useState(null)
   const [messages, setMessages] = useState([])
   const [waiting, setWaiting] = useState(false)
@@ -49,17 +49,20 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
           questionIndex,
           order,
           selectedIds: [],
-          firstAnswerIds: null,
-          locked: false,
+          graded: false,
         },
       ])
     },
     [nextId],
   )
 
-  // 진입 조건이 바뀌면 새 세션이다
+  /*
+   * 진입 조건이 바뀌면 새 세션이다. sessionId가 여기 들어 있는 이유는 사이드바에서 다른 세션을
+   * 눌렀을 때 앞 대화가 남아 있으면 안 되기 때문이다 —
+   * 지난 대화를 실제로 불러오는 건 서버가 붙은 뒤다(지금은 어느 세션이든 새로 시작한다).
+   */
   useEffect(() => {
-    const sessionKey = `${certCode}|${domain}|${reviewIndex}`
+    const sessionKey = `${certCode}|${domain}|${reviewIndex}|${sessionId}`
     if (startedFor.current === sessionKey) return
     startedFor.current = sessionKey
     setMessages([])
@@ -85,7 +88,7 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
         appendQuestion(0, 1)
       }
     })
-  }, [certCode, domain, reviewIndex, appendText, appendQuestion])
+  }, [certCode, domain, reviewIndex, sessionId, appendText, appendQuestion])
 
   const questionMessages = messages.filter((message) => message.kind === 'question')
   const currentQuestion = questionMessages[questionMessages.length - 1] ?? null
@@ -93,23 +96,18 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
 
   function gradeAnswer(message, pickedIds) {
     const question = questions[message.questionIndex]
-    const retry = message.firstAnswerIds !== null
     const correct = isAnswerCorrect(question, pickedIds)
 
     const markerOf = (id) => MARKERS[question.choices.findIndex((c) => c.id === id)]
     const correctIds = question.choices.filter((c) => c.correct).map((c) => c.id)
+    // 고른 것 중 틀린 것만 — 복수 정답에서 하나만 맞힌 경우 맞힌 보기는 여기 들어오면 안 된다
+    const wrongChoices = question.choices.filter(
+      (c) => pickedIds.includes(c.id) && !c.correct,
+    )
 
     setMessages((current) =>
       current.map((item) =>
-        item.id === message.id
-          ? {
-              ...item,
-              selectedIds: pickedIds,
-              // 첫 답은 덮어쓰지 않는다 — 재시도로 맞힌 걸 정답으로 세면 취약 유형 판정이 오염된다
-              firstAnswerIds: retry ? item.firstAnswerIds : pickedIds,
-              locked: true,
-            }
-          : item,
+        item.id === message.id ? { ...item, selectedIds: pickedIds, graded: true } : item,
       ),
     )
 
@@ -120,16 +118,18 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
         correct,
         correctMarkers: correctIds.map(markerOf).join(', '),
         correctChoices: question.choices.filter((c) => c.correct),
-        pickedChoices: question.choices.filter((c) => pickedIds.includes(c.id)),
-        retry,
+        wrongMarkers: wrongChoices.map((c) => markerOf(c.id)).join(', '),
+        wrongChoices,
       }),
     )
 
-    if (!retry && askedCount >= SESSION_QUESTION_LIMIT) {
-      appendText(
-        'ai',
-        `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`,
-      )
+    /*
+     * 채점 뒤에 다음을 재촉하지 않는다 — 해설을 읽는 중에 넘어가라는 말이 붙으면 방해가 된다.
+     * 넘어가고 싶으면 입력창 옆 버튼을 누른다(docs/product.md §2 ①).
+     * 세션 한도는 예외다. 여기서 끊지 않으면 세션 하나가 무한정 길어진다.
+     */
+    if (askedCount >= SESSION_QUESTION_LIMIT) {
+      appendText('ai', `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`)
     }
   }
 
@@ -158,32 +158,14 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
     gradeAnswer(message, message.selectedIds)
   }
 
-  function retryCurrent() {
-    setMessages((current) =>
-      current.map((item) =>
-        item.id === currentQuestion.id ? { ...item, locked: false } : item,
-      ),
-    )
-    appendText('ai', '다시 골라 보세요. 기록에는 첫 답만 남아요.', { retryPrompt: true })
-  }
-
   function askNextQuestion() {
     appendQuestion(currentQuestion.questionIndex + 1, askedCount + 1)
-  }
-
-  /* 재선택 안내에 답 대신 채팅을 하면 안 고르겠다는 뜻이다 — 안내를 걷고 보기를 다시 잠근다. */
-  function cancelRetryPrompt(current) {
-    if (!current.some((item) => item.retryPrompt)) return current
-
-    return current
-      .filter((item) => !item.retryPrompt)
-      .map((item) => (item.id === currentQuestion?.id ? { ...item, locked: true } : item))
   }
 
   function sendMessage(text) {
     const history = [...messages, { role: 'user', text }]
     setMessages((current) => [
-      ...cancelRetryPrompt(current),
+      ...current,
       { id: nextId(), role: 'user', kind: 'text', text },
     ])
     setWaiting(true)
@@ -199,14 +181,13 @@ export function useStudyThread({ certCode, domain, reviewIndex }) {
     messages,
     waiting,
     currentQuestion,
-    answered: Boolean(currentQuestion) && currentQuestion.firstAnswerIds !== null,
+    answered: Boolean(currentQuestion) && currentQuestion.graded,
     hasMore: Boolean(
       currentQuestion && currentQuestion.questionIndex + 1 < (questions?.length ?? 0),
     ),
     reachedLimit: askedCount >= SESSION_QUESTION_LIMIT,
     selectChoice,
     submitAnswer,
-    retryCurrent,
     askNextQuestion,
     sendMessage,
   }

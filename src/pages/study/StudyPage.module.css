@@ -1,17 +1,25 @@
+/* 높이는 AppLayout의 본문 칸에서 받는다 — 100vh를 직접 쓰면 좁은 화면에서 메뉴 버튼만큼 넘친다 */
 .page {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  flex: 1;
+  min-height: 0;
 }
 
-/* 대화만 스크롤한다 — 입력창은 늘 바닥에 붙어 있다 */
-.thread {
+/*
+ * 대화만 스크롤한다 — 입력창은 늘 바닥에 붙어 있다.
+ * both-edges인 이유: .chatInner는 이 칸 안에서, .composerRow는 밖에서 각각 가운데 정렬한다.
+ * 스크롤바가 생기면 안쪽만 폭이 줄어 말풍선 열이 입력창보다 왼쪽으로 밀린다.
+ * 한쪽만 비우는 stable로는 그 어긋남이 영구화되고, 양쪽을 비워야 중심선이 그대로 남는다.
+ */
+.chat {
   flex: 1;
   overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
 }
 
-.threadInner {
+.chatInner {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -78,39 +86,24 @@
   }
 }
 
-.actions {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
-
-.primary {
-  padding: var(--space-2) var(--space-4);
-  border: 0;
+/*
+ * 입력창 안에서 `보내기` 왼쪽에 선다. 세로 여백을 `보내기`와 같게 맞춰야 높이가 어긋나지 않는다.
+ * 채운 버튼으로 두면 강조색 두 개가 나란히 서서 서로 싸우므로 테두리만 두른다 —
+ * `보내기`는 입력이 없으면 회색이라, 답한 직후엔 이쪽이 자연히 눈에 먼저 들어온다.
+ */
+.action {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent);
   border-radius: var(--radius-md);
-  background: var(--color-accent);
-  color: var(--color-text-on-accent);
+  background: var(--color-bg);
+  color: var(--color-accent);
   text-decoration: none;
-  font-size: var(--text-sm);
+  white-space: nowrap;
   transition: background var(--transition-fast);
 }
 
-.primary:hover {
-  background: var(--color-accent-hover);
-}
-
-.secondary {
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
-.secondary:hover {
-  color: var(--color-text);
-  border-color: var(--color-text-muted);
+.action:hover {
+  background: var(--color-page);
 }
 
 .jump {

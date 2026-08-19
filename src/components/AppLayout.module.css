@@ -1,17 +1,40 @@
+/*
+ * 껍데기는 화면 높이에 딱 맞춘다(min-height가 아니라 height). 스크롤은 본문 칸이 맡는다 —
+ * 높이가 정해져야 학습 화면처럼 "화면을 꽉 채우는" 화면이 남은 높이를 받아 갈 수 있다.
+ * 100vh가 아니라 100dvh인 이유는 모바일 브라우저의 주소창이 접히고 펴지기 때문이다.
+ */
 .shell {
   display: grid;
   grid-template-columns: var(--layout-sidebar-width) minmax(0, 1fr);
-  min-height: 100vh;
+  height: 100dvh;
 }
 
 .aside {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100dvh;
 }
 
+/*
+ * 본문은 세로로 쌓이며 스스로 스크롤하는 칸이다. 화면이 100vh를 직접 쓰면 좁은 화면에서
+ * 위에 붙는 메뉴 버튼 높이만큼 넘쳐 입력창이 화면 밖으로 밀린다 — 높이는 여기서 받아 간다
+ * (학습 화면의 .page { flex: 1 }). 긴 화면은 이 칸 안에서 스크롤한다.
+ */
 .content {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  overflow-y: auto;
+  /* 스크롤바 자리를 늘 비워 둔다 — 긴 화면(대시보드)과 짧은 화면을 오갈 때 본문이 좌우로 튄다 */
+  scrollbar-gutter: stable;
+}
+
+/*
+ * 화면은 이 칸의 폭을 다 쓴다. 세로 flex에서는 좌우 auto 여백이 늘리기(stretch)를 이기기 때문에
+ * 이 줄이 없으면 max-width로 가운데 정렬한 화면들이 글자 폭까지 쪼그라든다.
+ */
+.content > * {
+  width: 100%;
 }
 
 /* 넓은 화면에서는 사이드바가 늘 보이므로 토글이 필요 없다 */
@@ -30,6 +53,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /*
+   * 닫혔을 때 visibility까지 감추는 이유는 키보드 때문이다. 밀어내기만 하면 링크가 탭 순서에
+   * 그대로 남아 Tab을 누르면 화면 밖으로 포커스가 사라진다.
+   * visibility는 단계적으로 바뀌어서 닫히는 동안에는 보인 채로 밀려 나간다.
+   */
   .aside {
     position: fixed;
     top: 0;
@@ -37,11 +65,15 @@
     width: var(--layout-sidebar-width);
     z-index: var(--z-modal);
     transform: translateX(-100%);
-    transition: transform var(--transition-fast);
+    visibility: hidden;
+    transition:
+      transform var(--transition-fast),
+      visibility var(--transition-fast);
   }
 
   .aside[data-open='true'] {
     transform: translateX(0);
+    visibility: visible;
   }
 
   .backdrop {
@@ -55,6 +87,9 @@
 
   .toggle {
     display: inline-block;
+    /* 화면과 달리 버튼은 글자 폭이다 — 위 .content > * 규칙을 되돌린다 */
+    width: auto;
+    align-self: flex-start;
     margin: var(--space-4) 0 0 var(--space-4);
     padding: var(--space-2) var(--space-4);
     border: 1px solid var(--color-border);

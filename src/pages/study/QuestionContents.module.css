@@ -13,11 +13,6 @@
   font-weight: 500;
 }
 
-.firstAnswer {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-}
-
 .submit {
   align-self: flex-start;
   padding: var(--space-2) var(--space-4);

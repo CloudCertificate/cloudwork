@@ -77,6 +77,16 @@
   background: var(--color-sidebar-hover);
 }
 
+/* 열어 둔 세션. 호버와 같은 면이라 테두리로 갈라 놓는다 — 안 그러면 지나가는 줄과 구별되지 않는다 */
+.item[data-active='true'] {
+  background: var(--color-sidebar-hover);
+  box-shadow: inset 0 0 0 1px var(--color-sidebar-border);
+}
+
+.item[data-active='true'] .itemMeta {
+  color: var(--color-text-muted-strong);
+}
+
 .itemTitle {
   font-size: var(--text-base);
   font-weight: 600;

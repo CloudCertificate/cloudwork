@@ -1,27 +1,22 @@
-import ChoiceList, { MARKERS } from '../../components/ChoiceList.jsx'
-import styles from './QuestionBubble.module.css'
+import ChoiceList from '../../components/ChoiceList.jsx'
+import styles from './QuestionContents.module.css'
 
 /*
- * 말풍선 안에 들어가는 문제. 해설은 여기 붙이지 않는다 — AI 말풍선이 이어서 말한다.
- * firstAnswerIds는 처음 고른 답이다. 다시 골라도 이 값은 바뀌지 않는다(기록에 남는 건 첫 답뿐).
+ * 말풍선 "안에 담기는" 문제다 — 풍선 자체(테두리·배경·좌우 정렬)는 MessageBubble이 그린다.
+ * 해설은 여기 붙이지 않는다. AI 말풍선이 이어서 말한다.
+ * 채점되면 보기가 잠긴다. 한 문제에 답은 한 번뿐이라 되돌리는 길은 없다.
  * 복수 정답 문제는 개수를 채운 뒤 제출해야 채점된다.
  */
-export default function QuestionBubble({
+export default function QuestionContents({
   question,
   order,
   selectedIds,
-  firstAnswerIds,
-  locked,
+  graded,
   onSelect,
   onSubmit,
 }) {
   const answerCount = question.answerCount ?? 1
   const multi = answerCount > 1
-  const graded = firstAnswerIds !== null
-
-  const firstMarkers = (firstAnswerIds ?? [])
-    .map((id) => MARKERS[question.choices.findIndex((choice) => choice.id === id)])
-    .join(', ')
 
   return (
     <div className={styles.question}>
@@ -38,12 +33,11 @@ export default function QuestionBubble({
         onSelect={onSelect}
         answerCount={answerCount}
         graded={graded}
-        locked={locked}
         showRationale={false}
         compact
       />
 
-      {multi && !locked ? (
+      {multi && !graded ? (
         <button
           className={styles.submit}
           type="button"
@@ -53,8 +47,6 @@ export default function QuestionBubble({
           답 제출하기 ({selectedIds.length}/{answerCount})
         </button>
       ) : null}
-
-      {graded ? <p className={styles.firstAnswer}>첫 답: {firstMarkers}</p> : null}
     </div>
   )
 }

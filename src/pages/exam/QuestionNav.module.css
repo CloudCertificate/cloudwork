@@ -70,6 +70,14 @@
   color: var(--color-text-on-accent);
 }
 
+/* 개수를 덜 고른 문항만 몇 개 골랐는지 적는다 — 다 고른 줄과 같아 보이면 안 된다 */
+.count {
+  margin-left: auto;
+  color: var(--color-wrong);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
 /* 답 여부는 스크린 리더에도 글자로 전한다 */
 .state {
   position: absolute;

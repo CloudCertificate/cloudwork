@@ -6,7 +6,7 @@ const MARKERS = ['A', 'B', 'C', 'D', 'E']
 /*
  * selectedIds — 고른 보기 id 배열. 단일 정답 문제도 배열로 다룬다(분기를 한 곳으로 모은다).
  * answerCount — 골라야 하는 개수. 2 이상이면 체크박스가 된다.
- * graded — 정오답 색을 입힐지 / locked — 더 이상 고를 수 없는지
+ * graded — 정오답 색을 입힐지. 채점되면 그대로 잠긴다(한 문제에 답은 한 번뿐이다)
  * showRationale — 보기마다 해설을 붙일지(채팅에서는 해설을 AI 말풍선이 맡는다)
  */
 export default function ChoiceList({
@@ -15,7 +15,6 @@ export default function ChoiceList({
   onSelect,
   answerCount = 1,
   graded,
-  locked = graded,
   showRationale = true,
   compact = false,
   name = 'choice',
@@ -48,7 +47,7 @@ export default function ChoiceList({
             name={multi ? `${name}-${choice.id}` : name}
             value={choice.id}
             checked={isSelected}
-            disabled={locked}
+            disabled={graded}
             onChange={() => onSelect(choice.id)}
             marker={MARKERS[index]}
             label={choice.text}

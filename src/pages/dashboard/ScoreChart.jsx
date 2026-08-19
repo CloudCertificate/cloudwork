@@ -3,13 +3,12 @@ import { Chart } from 'react-google-charts'
 import { prefersReducedMotion } from '../../utils/motion.js'
 import styles from './ScoreChart.module.css'
 
-const CHART_HEIGHT = 320
 const PERCENT_MAX = 100
 /* 구글 차트는 CSS 밖에서 그려서 --motion-* 토큰이 닿지 않는다. 여기 숫자가 그 자리를 대신한다 */
 const ANIMATION_MS = 600
 
 /*
- * 구글 차트는 색을 JS 옵션으로 받는다. 토큰과 갈라지지 않도록 tokens.css의 값을 읽어 넘긴다.
+ * 구글 차트는 색과 높이를 JS 옵션으로 받는다. 토큰과 갈라지지 않도록 tokens.css의 값을 읽어 넘긴다.
  * (읽기 전용이라 CSS가 여전히 단일 소스다)
  */
 function readTokenColors() {
@@ -24,8 +23,17 @@ function readTokenColors() {
   }
 }
 
+/* 높이가 자리표시자 CSS와 갈라지면 그래프가 뜨는 순간 화면이 튄다 */
+function readChartHeight() {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(
+    '--layout-chart-height',
+  )
+  return Number.parseInt(raw, 10)
+}
+
 export default function ScoreChart({ scores, passProbabilities, passScore, maxScore }) {
   const colors = useMemo(() => readTokenColors(), [])
+  const chartHeight = useMemo(() => readChartHeight(), [])
 
   /*
    * animation.startup은 이 버전(react-google-charts 5 + charts v51)에서 차트를 통째로 죽인다
@@ -69,7 +77,7 @@ export default function ScoreChart({ scores, passProbabilities, passScore, maxSc
       duration: prefersReducedMotion() ? 0 : ANIMATION_MS,
       easing: 'out',
     },
-    height: CHART_HEIGHT,
+    height: chartHeight,
     chartArea: { left: 64, right: 64, top: 24, bottom: 56 },
     legend: { position: 'bottom', textStyle: { color: colors.muted } },
     backgroundColor: 'transparent',
@@ -108,11 +116,11 @@ export default function ScoreChart({ scores, passProbabilities, passScore, maxSc
     <Chart
       chartType="LineChart"
       width="100%"
-      height={`${CHART_HEIGHT}px`}
+      height={`${chartHeight}px`}
       data={data}
       options={options}
       chartEvents={[{ eventName: 'ready', callback: () => setGrown(true) }]}
-      loader={<div className={styles.placeholder}>그래프를 불러오는 중입니다.</div>}
+      loader={<div className={styles.placeholder}>그래프를 불러오는 중이에요.</div>}
     />
   )
 }

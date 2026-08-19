@@ -6,7 +6,7 @@
  * 채점은 여기서 하지 않는다 — 정답은 검수를 거쳐 저장된 데이터이고, AI는 그 결과를 설명만 한다.
  *
  * 이 파일의 말투는 임시가 아니라 **폐기 예정**이다. 서버가 붙는 1단계에서 buildGradeReply는
- * 옮기는 게 아니라 지운다 — 말투를 여기와 서버 프롬프트 두 곳에 두면 갈라진다(CLAUDE.md §4).
+ * 옮기는 게 아니라 지운다 — 말투를 여기와 서버 프롬프트 두 곳에 두면 갈라진다(docs/backend-contract.md §5).
  */
 
 const REPLY_DELAY_MS = 700
@@ -22,27 +22,21 @@ export function buildGradeReply({
   correct,
   correctMarkers,
   correctChoices,
-  pickedChoices,
-  retry,
+  wrongMarkers,
+  wrongChoices,
 }) {
   const correctReason = correctChoices.map((choice) => choice.rationale).join('\n')
-  const pickedReason = pickedChoices
-    .filter((choice) => !choice.correct)
-    .map((choice) => choice.rationale)
-    .join('\n')
-
-  if (retry) {
-    return correct ? `맞았어요! ${correctReason}` : pickedReason
-  }
 
   if (correct) {
     return `정답이에요!\n${correctReason}`
   }
 
+  const wrongReason = wrongChoices.map((choice) => choice.rationale).join('\n')
+
   // 보기 기호(A~E)는 받침이 없어 '예요'로 붙는다
   return (
     `정답은 ${correctMarkers}예요.\n${correctReason}\n\n` +
-    `고르신 답이 아닌 이유예요.\n${pickedReason}`
+    `${wrongMarkers}의 ${wrongReason}`
   )
 }
 
