@@ -6,8 +6,8 @@ import PageLoading from '../../components/PageLoading.jsx'
 import styles from './StartPage.module.css'
 
 const MODES = [
-  { id: 'study', label: 'AI 학습', description: '한 문제씩 풀고 AI와 함께 복습합니다.' },
-  { id: 'exam', label: '모의고사', description: '실제 시험처럼 한 번에 풀고 채점합니다.' },
+  { id: 'study', label: 'AI 학습', description: '한 문제씩 풀고 AI와 함께 복습해요.' },
+  { id: 'exam', label: '모의고사', description: '실제 시험처럼 한 번에 풀고 채점해요.' },
 ]
 
 export default function StartPage() {
@@ -26,7 +26,7 @@ export default function StartPage() {
   }
 
   if (certifications === null) {
-    return <PageLoading>자격증 목록을 불러오는 중입니다.</PageLoading>
+    return <PageLoading>자격증 목록을 불러오는 중이에요.</PageLoading>
   }
 
   return (
@@ -49,6 +49,8 @@ export default function StartPage() {
                   ? certification.name
                   : `${certification.name} (준비 중)`
               }
+              /* 실제 시험 기준이다. 지금 모의고사는 준비된 문항 수만큼 나오고 시간도 그만큼 준다 */
+              description={`실제 시험 ${certification.questionCount}문항 · ${certification.timeLimitMinutes}분`}
             />
           ))}
         </fieldset>

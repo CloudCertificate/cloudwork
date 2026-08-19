@@ -25,7 +25,7 @@ export default function ExamResultPage() {
   if (!state) {
     return (
       <main className={styles.page}>
-        <h1 className={styles.title}>표시할 결과가 없습니다</h1>
+        <h1 className={styles.title}>표시할 결과가 없어요</h1>
         <p className={styles.note}>모의고사를 다시 시작해 주세요.</p>
         <Link className={styles.primaryLink} to="/">
           시작 화면으로
@@ -35,7 +35,7 @@ export default function ExamResultPage() {
   }
 
   if (questions === null) {
-    return <PageLoading>채점하는 중입니다.</PageLoading>
+    return <PageLoading>채점하는 중이에요.</PageLoading>
   }
 
   const { answers, certCode, flagged = {}, reason } = state
@@ -48,7 +48,7 @@ export default function ExamResultPage() {
     <main className={styles.page}>
       <h1 className={styles.title}>채점 결과</h1>
       {reason === 'timeout' ? (
-        <p className={styles.note}>제한 시간이 끝나 자동으로 제출되었습니다.</p>
+        <p className={styles.note}>제한 시간이 끝나서 자동으로 제출했어요.</p>
       ) : null}
 
       <section className={styles.scoreBox} data-reached={reached}>
@@ -68,7 +68,7 @@ export default function ExamResultPage() {
       <h2 className={styles.subtitle}>문항별 결과</h2>
       {flaggedCount > 0 ? (
         <p className={styles.flaggedSummary}>
-          표시한 문제가 {flaggedCount}개 있습니다. 한 번 더 짚어 보세요!
+          표시한 문제가 {flaggedCount}개 있어요. 한 번 더 짚어 보세요!
         </p>
       ) : null}
       <ol className={styles.list}>
@@ -95,6 +95,16 @@ export default function ExamResultPage() {
           )
         })}
       </ol>
+
+      {/* 결과를 다 읽은 뒤 갈 곳이 없으면 사이드바로 나가는 수밖에 없다 */}
+      <div className={styles.actions}>
+        <Link className={styles.primaryLink} to={`/exam?cert=${certCode}`}>
+          다시 응시하기
+        </Link>
+        <Link className={styles.secondaryLink} to="/dashboard">
+          분석 보기
+        </Link>
+      </div>
     </main>
   )
 }

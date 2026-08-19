@@ -150,6 +150,26 @@
   color: var(--color-accent);
 }
 
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.secondaryLink {
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.secondaryLink:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 .primaryLink {
   display: inline-block;
   padding: var(--space-3) var(--space-6);

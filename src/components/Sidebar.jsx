@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useSearchParams } from 'react-router-dom'
 import { signOut } from '../api/auth.js'
 import { fetchStudySessions } from '../api/sessions.js'
 import { fetchCurrentUser } from '../api/user.js'
@@ -15,7 +15,7 @@ function formatStartedAt(isoDateTime) {
 }
 
 /* 줄 왼쪽에 붙는 대화 표시. 아이콘이 하나뿐이라 별도 파일로 빼지 않는다. */
-function ThreadMark() {
+function ChatMark() {
   return (
     <svg
       className={styles.mark}
@@ -37,6 +37,7 @@ function ThreadMark() {
 
 export default function Sidebar({ onNavigate }) {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [sessions, setSessions] = useState(null)
   const [user, setUser] = useState(null)
 
@@ -51,17 +52,20 @@ export default function Sidebar({ onNavigate }) {
   }
 
   const ordered = sessions === null ? [] : sortSessionsByRecent(sessions)
+  // 어느 세션을 열어 뒀는지는 주소가 들고 있다. NavLink는 경로만 보므로 여기서는 쓰지 않는다 —
+  // 네 줄이 모두 /study라서 전부 현재 페이지로 표시된다
+  const activeSessionId = searchParams.get('session')
 
   return (
     <div className={styles.sidebar}>
-      <NavLink className={styles.logo} to="/" onClick={onNavigate}>
+      <Link className={styles.logo} to="/" onClick={onNavigate}>
         CloudCertificate
-      </NavLink>
+      </Link>
 
       {/* 자격증·모드는 시작 화면에서 고른다 — 여기 드롭다운을 두면 선택 지점이 둘이 된다 */}
-      <NavLink className={styles.newStudy} to="/" onClick={onNavigate}>
+      <Link className={styles.newStudy} to="/" onClick={onNavigate}>
         새 학습 시작
-      </NavLink>
+      </Link>
 
       <NavLink className={styles.analysis} to="/dashboard" onClick={onNavigate}>
         모의고사 분석
@@ -69,29 +73,35 @@ export default function Sidebar({ onNavigate }) {
 
       <nav className={styles.history} aria-label="학습 기록">
         {sessions === null ? (
-          <p className={styles.placeholder}>기록을 불러오는 중입니다.</p>
+          <p className={styles.placeholder}>기록을 불러오는 중이에요.</p>
         ) : ordered.length === 0 ? (
           <p className={styles.placeholder}>
-            아직 학습 기록이 없습니다. 첫 문제를 풀면 여기에 쌓입니다.
+            아직 학습 기록이 없어요. 첫 문제를 풀면 여기에 쌓여요.
           </p>
         ) : (
           <ul className={styles.list}>
-            {ordered.map((session) => (
-              <li key={session.id}>
-                <NavLink
-                  className={styles.item}
-                  to={`/study?cert=${session.certCode}`}
-                  onClick={onNavigate}
-                >
-                  <ThreadMark />
-                  <span className={styles.itemTitle}>{session.title}</span>
-                  <span className={styles.itemMeta}>
-                    <span>{session.questionCount}문제</span>
-                    <span>{formatStartedAt(session.startedAt)}</span>
-                  </span>
-                </NavLink>
-              </li>
-            ))}
+            {ordered.map((session) => {
+              const isActive = session.id === activeSessionId
+
+              return (
+                <li key={session.id}>
+                  <Link
+                    className={styles.item}
+                    to={`/study?cert=${session.certCode}&session=${session.id}`}
+                    data-active={isActive}
+                    aria-current={isActive ? 'page' : undefined}
+                    onClick={onNavigate}
+                  >
+                    <ChatMark />
+                    <span className={styles.itemTitle}>{session.title}</span>
+                    <span className={styles.itemMeta}>
+                      <span>{session.questionCount}문제</span>
+                      <span>{formatStartedAt(session.startedAt)}</span>
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         )}
       </nav>

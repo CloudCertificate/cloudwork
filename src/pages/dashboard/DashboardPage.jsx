@@ -30,7 +30,7 @@ export default function DashboardPage() {
   }, [])
 
   if (history === null) {
-    return <PageLoading>기록을 불러오는 중입니다.</PageLoading>
+    return <PageLoading>기록을 불러오는 중이에요.</PageLoading>
   }
 
   const scores = history.attempts.map((attempt) => attempt.score)
@@ -38,12 +38,12 @@ export default function DashboardPage() {
   if (scores.length === 0) {
     return (
       <main className={styles.page}>
-        <h1 className={styles.title}>학습 그래프 분석</h1>
+        <h1 className={styles.title}>모의고사 분석</h1>
         <p className={styles.empty}>
-          아직 모의고사 결과가 없습니다. 최초 응시를 마치면 추이와 유형별 정답률이 쌓입니다.
+          아직 모의고사 결과가 없어요. 첫 응시를 마치면 추이와 유형별 정답률이 쌓여요.
         </p>
         <Link className={styles.primaryLink} to="/">
-          시험 보러 가기
+          모의고사 보러 가기
         </Link>
       </main>
     )
@@ -67,8 +67,8 @@ export default function DashboardPage() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.title}>모의고사 결과 분석</h1>
-      <p className={styles.scope}>모의고사 데이터만 이용됩니다. AI 학습은 제외됩니다.</p>
+      <h1 className={styles.title}>모의고사 분석</h1>
+      <p className={styles.scope}>모의고사 기록만 써요. AI 학습은 집계에 넣지 않아요.</p>
 
       <dl className={styles.kpis}>
         <div className={styles.kpi}>
@@ -97,9 +97,9 @@ export default function DashboardPage() {
               >
                 {probabilityPercent}%
               </strong>
-              입니다.
+              예요.
             </p>
-            <p className={styles.cardNote}>*실제 시험 합격 여부를 예측하지 않습니다.</p>
+            <p className={styles.cardNote}>*실제 시험 합격 여부를 예측하지 않아요.</p>
           </div>
         )}
 
@@ -146,7 +146,7 @@ export default function DashboardPage() {
             ))}
           </ul>
           <p className={styles.cardNote}>
-            *&lsquo;나중에 다시 보기&rsquo;로 표시한 유형입니다.
+            *&lsquo;나중에 다시 보기&rsquo;로 표시한 유형이에요.
           </p>
         </section>
       </div>

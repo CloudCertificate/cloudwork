@@ -8,6 +8,7 @@ import PageLoading from '../../components/PageLoading.jsx'
 import styles from './ExamPage.module.css'
 
 const LOW_TIME_SECONDS = 60
+const TICK_MS = 1000
 
 function formatTime(totalSeconds) {
   const minutes = Math.floor(totalSeconds / 60)
@@ -26,8 +27,10 @@ export default function ExamPage() {
   const [direction, setDirection] = useState('forward')
   // { [questionId]: ['a', 'c'] } — 단일 정답 문제도 배열로 다룬다
   const [answers, setAnswers] = useState({})
-  // 찍었거나 애매한 문제에 다는 표시. 채점·점수에는 영향을 주지 않는다(CLAUDE.md §5)
+  // 찍었거나 애매한 문제에 다는 표시. 채점·점수에는 영향을 주지 않는다(docs/analytics.md §2)
   const [flagged, setFlagged] = useState({})
+  // 남은 시간은 마감 시각에서 계산한다 — 아래 타이머 주석 참고
+  const [deadline, setDeadline] = useState(null)
   const [remainingSeconds, setRemainingSeconds] = useState(null)
   const [confirming, setConfirming] = useState(false)
   const dialogRef = useRef(null)
@@ -36,6 +39,7 @@ export default function ExamPage() {
     fetchExamSet(certCode).then((set) => {
       setExamSet(set)
       setRemainingSeconds(set.timeLimitSeconds)
+      setDeadline(Date.now() + set.timeLimitSeconds * 1000)
     })
   }, [certCode])
 
@@ -49,17 +53,34 @@ export default function ExamPage() {
     [answers, certCode, flagged, navigate],
   )
 
+  /*
+   * 제출 함수는 답안이 바뀔 때마다 새로 만들어진다. 타이머가 그것에 의존하면 보기를 고를 때마다
+   * 타이머가 처음부터 다시 시작해 1초 안에 연달아 고르는 동안 시간이 흐르지 않는다 — ref로 최신 것만 들고 있는다.
+   */
+  const submitRef = useRef(submit)
   useEffect(() => {
-    if (remainingSeconds === null) return
+    submitRef.current = submit
+  }, [submit])
 
-    if (remainingSeconds <= 0) {
-      submit('timeout')
-      return
-    }
+  /*
+   * 남은 시간은 세지 않고 마감 시각에서 뺀다. 1초짜리 타이머를 이어 붙이면 매번 조금씩 밀리고,
+   * 탭이 뒤로 가 있는 동안 브라우저가 타이머를 늦추면 시계가 실제보다 느리게 간다.
+   */
+  useEffect(() => {
+    if (deadline === null) return
 
-    const timer = setTimeout(() => setRemainingSeconds((current) => current - 1), 1000)
-    return () => clearTimeout(timer)
-  }, [remainingSeconds, submit])
+    const timer = setInterval(() => {
+      const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000))
+      setRemainingSeconds(left)
+
+      if (left === 0) {
+        clearInterval(timer)
+        submitRef.current('timeout')
+      }
+    }, TICK_MS)
+
+    return () => clearInterval(timer)
+  }, [deadline])
 
   useEffect(() => {
     const dialog = dialogRef.current
@@ -70,15 +91,16 @@ export default function ExamPage() {
   }, [confirming])
 
   if (examSet === null) {
-    return <PageLoading>모의고사 문제를 불러오는 중입니다.</PageLoading>
+    return <PageLoading>모의고사 문제를 불러오는 중이에요.</PageLoading>
   }
 
   const { questions } = examSet
   const question = questions[index]
   const picked = answers[question.id] ?? []
   const answerCount = question.answerCount ?? 1
-  const unansweredCount = questions.filter(
-    (item) => (answers[item.id] ?? []).length === 0,
+  // 복수 정답을 하나만 고른 문항도 미완성이다 — 그대로 제출하면 오답으로 채점된다
+  const incompleteCount = questions.filter(
+    (item) => (answers[item.id] ?? []).length !== (item.answerCount ?? 1),
   ).length
   const isLowTime = remainingSeconds !== null && remainingSeconds <= LOW_TIME_SECONDS
 
@@ -112,7 +134,7 @@ export default function ExamPage() {
   }
 
   function handleSubmitClick() {
-    if (unansweredCount > 0) {
+    if (incompleteCount > 0) {
       setConfirming(true)
       return
     }
@@ -176,6 +198,11 @@ export default function ExamPage() {
             </button>
           }
         >
+          {answerCount > 1 ? (
+            <p className={styles.multiHint}>
+              {answerCount}개를 고르세요. 현재 {picked.length}개
+            </p>
+          ) : null}
           <ChoiceList
             choices={question.choices}
             selectedIds={picked}
@@ -206,7 +233,7 @@ export default function ExamPage() {
         aria-label="제출 확인"
       >
         <p className={styles.modalText}>
-          아직 {unansweredCount}문제가 남았어요. 제출할까요?
+          아직 {incompleteCount}문제가 남아있어요. 제출할까요?
         </p>
         <div className={styles.modalActions}>
           <button

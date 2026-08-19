@@ -24,3 +24,9 @@ const CERTIFICATIONS = [
 export function fetchCertifications() {
   return Promise.resolve(CERTIFICATIONS)
 }
+
+export function fetchCertification(code) {
+  return Promise.resolve(
+    CERTIFICATIONS.find((certification) => certification.code === code) ?? null,
+  )
+}
