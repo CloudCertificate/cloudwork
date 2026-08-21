@@ -1,34 +1,36 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# 문서
+docs/
 
-node_modules
-dist
-dist-ssr
-*.local
+# 가상환경
+.venv/
+venv/
 
-# 작업 규칙·기획 문서 (로컬 전용)
-CLAUDE.md
+# PyCharm
+.idea/
+*.iml
 
-# Env
+# Python
+__pycache__/
+*.py[cod]
+
+# 환경변수 — DB 접속정보·API 키가 들어간다. 예시 파일만 공유한다.
 .env
 .env.*
 !.env.example
 
-# Editor directories and files
-*.lnk
-.vscode/*
-!.vscode/extensions.json
-.idea
+# 테스트·커버리지 산출물
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 로그
+*.log
+
+# OS·에디터 잡파일
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+desktop.ini
+*.lnk
+CLAUDE.md
+.claude/settings.local.json
 .gstack/
