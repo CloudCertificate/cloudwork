@@ -1,8 +1,8 @@
 ---
-name: CloudCertificate백엔드
+name: CloudCertificate-backend
 about: CloudCertificate 서버 기능 개발
 title: ''
-labels: bug, documentation
+labels: bug
 assignees: sokkomann
 
 ---
@@ -55,6 +55,4 @@ assignees: sokkomann
 ## ✅ 완료 조건
 - API 정상 동작
 - Swagger 테스트 완료
-- React 연동 완료
 - 예외 처리 완료
-- 코드 리뷰 완료
