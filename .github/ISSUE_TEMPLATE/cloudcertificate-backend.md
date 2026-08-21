@@ -2,7 +2,7 @@
 name: CloudCertificate-backend
 about: CloudCertificate 서버 기능 개발
 title: ''
-labels: bug
+labels: ''
 assignees: sokkomann
 
 ---
@@ -36,7 +36,6 @@ assignees: sokkomann
 - [ ] DB CRUD 구현
 - [ ] 예외 처리
 - [ ] Swagger 문서 확인
-- [ ] React 연동 테스트
 
 ---
 
