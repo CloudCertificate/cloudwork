@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchQuestions } from '../../api/quiz.js'
 import { askTutor, buildGradeReply } from '../../api/tutor.js'
 import { isAnswerCorrect } from '../../features/exam/score.js'
-import { MARKERS } from '../../components/ChoiceList.jsx'
 
 // 한 세션이 무한정 길어지지 않도록 이쯤에서 마무리를 제안한다.
 const SESSION_QUESTION_LIMIT = 20
@@ -14,7 +13,7 @@ const SESSION_QUESTION_LIMIT = 20
  *
  * 채점은 여기서 `correct` 필드로 판정하고 AI에게는 결과를 사실로 넘긴다(docs/product.md §2 ②).
  */
-export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
+export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
   const [questions, setQuestions] = useState(null)
   const [messages, setMessages] = useState([])
   const [waiting, setWaiting] = useState(false)
@@ -48,7 +47,7 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
           kind: 'question',
           questionIndex,
           order,
-          selectedIds: [],
+          selectedMarkers: [],
           graded: false,
         },
       ])
@@ -62,12 +61,12 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
    * 지난 대화를 실제로 불러오는 건 서버가 붙은 뒤다(지금은 어느 세션이든 새로 시작한다).
    */
   useEffect(() => {
-    const sessionKey = `${certCode}|${domain}|${reviewIndex}|${sessionId}`
+    const sessionKey = `${examId}|${domain}|${reviewIndex}|${sessionId}`
     if (startedFor.current === sessionKey) return
     startedFor.current = sessionKey
     setMessages([])
 
-    fetchQuestions(certCode, { domain }).then((loaded) => {
+    fetchQuestions(examId, { domain }).then((loaded) => {
       const requested = Number.parseInt(reviewIndex ?? '', 10)
       const isReview =
         Number.isInteger(requested) && requested >= 0 && requested < loaded.length
@@ -88,37 +87,39 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
         appendQuestion(0, 1)
       }
     })
-  }, [certCode, domain, reviewIndex, sessionId, appendText, appendQuestion])
+  }, [examId, domain, reviewIndex, sessionId, appendText, appendQuestion])
 
   const questionMessages = messages.filter((message) => message.kind === 'question')
   const currentQuestion = questionMessages[questionMessages.length - 1] ?? null
   const askedCount = questionMessages.length
 
-  function gradeAnswer(message, pickedIds) {
+  function gradeAnswer(message, pickedMarkers) {
     const question = questions[message.questionIndex]
-    const correct = isAnswerCorrect(question, pickedIds)
+    const correct = isAnswerCorrect(question, pickedMarkers)
 
-    const markerOf = (id) => MARKERS[question.choices.findIndex((c) => c.id === id)]
-    const correctIds = question.choices.filter((c) => c.correct).map((c) => c.id)
+    const label = (marker) => marker.toUpperCase()
+    const correctChoices = question.choices.filter((c) => c.correct)
     // 고른 것 중 틀린 것만 — 복수 정답에서 하나만 맞힌 경우 맞힌 보기는 여기 들어오면 안 된다
     const wrongChoices = question.choices.filter(
-      (c) => pickedIds.includes(c.id) && !c.correct,
+      (c) => pickedMarkers.includes(c.marker) && !c.correct,
     )
 
     setMessages((current) =>
       current.map((item) =>
-        item.id === message.id ? { ...item, selectedIds: pickedIds, graded: true } : item,
+        item.id === message.id
+          ? { ...item, selectedMarkers: pickedMarkers, graded: true }
+          : item,
       ),
     )
 
-    appendText('user', pickedIds.map((id) => markerOf(id)).join(', '))
+    appendText('user', pickedMarkers.map(label).join(', '))
     appendText(
       'ai',
       buildGradeReply({
         correct,
-        correctMarkers: correctIds.map(markerOf).join(', '),
-        correctChoices: question.choices.filter((c) => c.correct),
-        wrongMarkers: wrongChoices.map((c) => markerOf(c.id)).join(', '),
+        correctMarkers: correctChoices.map((c) => label(c.marker)).join(', '),
+        correctChoices,
+        wrongMarkers: wrongChoices.map((c) => label(c.marker)).join(', '),
         wrongChoices,
       }),
     )
@@ -129,7 +130,10 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
      * 세션 한도는 예외다. 여기서 끊지 않으면 세션 하나가 무한정 길어진다.
      */
     if (askedCount >= SESSION_QUESTION_LIMIT) {
-      appendText('ai', `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`)
+      appendText(
+        'ai',
+        `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`,
+      )
     }
   }
 
@@ -137,7 +141,7 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
   function selectChoice(message, choiceId) {
     const question = questions[message.questionIndex]
     const answerCount = question.answerCount ?? 1
-    const picked = message.selectedIds
+    const picked = message.selectedMarkers
 
     let nextPicked
     if (answerCount === 1) nextPicked = [choiceId]
@@ -147,7 +151,7 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
 
     setMessages((current) =>
       current.map((item) =>
-        item.id === message.id ? { ...item, selectedIds: nextPicked } : item,
+        item.id === message.id ? { ...item, selectedMarkers: nextPicked } : item,
       ),
     )
 
@@ -155,7 +159,7 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
   }
 
   function submitAnswer(message) {
-    gradeAnswer(message, message.selectedIds)
+    gradeAnswer(message, message.selectedMarkers)
   }
 
   function askNextQuestion() {

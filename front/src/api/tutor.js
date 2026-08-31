@@ -25,13 +25,13 @@ export function buildGradeReply({
   wrongMarkers,
   wrongChoices,
 }) {
-  const correctReason = correctChoices.map((choice) => choice.rationale).join('\n')
+  const correctReason = correctChoices.map((choice) => choice.explanation).join('\n')
 
   if (correct) {
     return `정답이에요!\n${correctReason}`
   }
 
-  const wrongReason = wrongChoices.map((choice) => choice.rationale).join('\n')
+  const wrongReason = wrongChoices.map((choice) => choice.explanation).join('\n')
 
   // 보기 기호(A~E)는 받침이 없어 '예요'로 붙는다
   return (

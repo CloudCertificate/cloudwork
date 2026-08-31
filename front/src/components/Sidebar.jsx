@@ -87,7 +87,7 @@ export default function Sidebar({ onNavigate }) {
                 <li key={session.id}>
                   <Link
                     className={styles.item}
-                    to={`/study?cert=${session.certCode}&session=${session.id}`}
+                    to={`/study?exam=${session.examId}&session=${session.id}`}
                     data-active={isActive}
                     aria-current={isActive ? 'page' : undefined}
                     onClick={onNavigate}

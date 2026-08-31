@@ -10,7 +10,9 @@ export const PASS_SCORE = 720
 
 /* 복수 정답은 정답 집합과 정확히 같아야 맞은 것으로 센다(부분 점수 없음). */
 export function isAnswerCorrect(question, picked = []) {
-  const correctIds = question.choices.filter((choice) => choice.correct).map((c) => c.id)
+  const correctIds = question.choices
+    .filter((choice) => choice.correct)
+    .map((choice) => choice.marker)
   if (picked.length !== correctIds.length) return false
   return correctIds.every((id) => picked.includes(id))
 }

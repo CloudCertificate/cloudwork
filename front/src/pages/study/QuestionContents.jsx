@@ -1,4 +1,5 @@
 import ChoiceList from '../../components/ChoiceList.jsx'
+import { domainLabel } from '../../features/domains.js'
 import styles from './QuestionContents.module.css'
 
 /*
@@ -10,7 +11,7 @@ import styles from './QuestionContents.module.css'
 export default function QuestionContents({
   question,
   order,
-  selectedIds,
+  selectedMarkers,
   graded,
   onSelect,
   onSubmit,
@@ -21,15 +22,15 @@ export default function QuestionContents({
   return (
     <div className={styles.question}>
       <p className={styles.meta}>
-        {order}번 · {question.domain}
+        {order}번 · {domainLabel(question.domainCode)}
         {multi ? ` · ${answerCount}개 선택` : ''}
       </p>
-      <p className={styles.text}>{question.text}</p>
+      <p className={styles.text}>{question.content}</p>
 
       <ChoiceList
         name={`choice-${question.id}`}
         choices={question.choices}
-        selectedIds={selectedIds}
+        selectedMarkers={selectedMarkers}
         onSelect={onSelect}
         answerCount={answerCount}
         graded={graded}
@@ -41,10 +42,10 @@ export default function QuestionContents({
         <button
           className={styles.submit}
           type="button"
-          disabled={selectedIds.length !== answerCount}
+          disabled={selectedMarkers.length !== answerCount}
           onClick={onSubmit}
         >
-          답 제출하기 ({selectedIds.length}/{answerCount})
+          답 제출하기 ({selectedMarkers.length}/{answerCount})
         </button>
       ) : null}
     </div>

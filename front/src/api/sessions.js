@@ -13,28 +13,28 @@ function daysAgo(days) {
 const SESSIONS = [
   {
     id: 's-1',
-    certCode: 'SAA-C03',
+    examId: 1,
     title: 'S3 스토리지 클래스 비교',
     questionCount: 4,
     startedAt: daysAgo(0),
   },
   {
     id: 's-2',
-    certCode: 'SAA-C03',
+    examId: 1,
     title: 'RDS 가용성 구성',
     questionCount: 3,
     startedAt: daysAgo(0),
   },
   {
     id: 's-3',
-    certCode: 'SAA-C03',
+    examId: 1,
     title: 'IAM 역할과 액세스 키',
     questionCount: 5,
     startedAt: daysAgo(3),
   },
   {
     id: 's-4',
-    certCode: 'SAA-C03',
+    examId: 1,
     title: 'VPC 서브넷 설계',
     questionCount: 6,
     startedAt: daysAgo(10),

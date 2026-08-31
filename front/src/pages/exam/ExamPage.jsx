@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchExamSet } from '../../api/exam.js'
+import { domainLabel } from '../../features/domains.js'
 import QuestionCard from './QuestionCard.jsx'
 import ChoiceList from '../../components/ChoiceList.jsx'
 import QuestionNav from './QuestionNav.jsx'
@@ -18,7 +19,7 @@ function formatTime(totalSeconds) {
 
 export default function ExamPage() {
   const [searchParams] = useSearchParams()
-  const certCode = searchParams.get('cert')
+  const examId = searchParams.get('exam')
   const navigate = useNavigate()
 
   const [examSet, setExamSet] = useState(null)
@@ -36,21 +37,21 @@ export default function ExamPage() {
   const dialogRef = useRef(null)
 
   useEffect(() => {
-    fetchExamSet(certCode).then((set) => {
+    fetchExamSet(examId).then((set) => {
       setExamSet(set)
       setRemainingSeconds(set.timeLimitSeconds)
       setDeadline(Date.now() + set.timeLimitSeconds * 1000)
     })
-  }, [certCode])
+  }, [examId])
 
   const submit = useCallback(
     (reason) => {
       navigate('/exam/result', {
         replace: true,
-        state: { certCode, answers, flagged, reason },
+        state: { examId, answers, flagged, reason },
       })
     },
-    [answers, certCode, flagged, navigate],
+    [answers, examId, flagged, navigate],
   )
 
   /*
@@ -155,8 +156,8 @@ export default function ExamPage() {
         <QuestionCard
           index={index}
           total={questions.length}
-          domain={question.domain}
-          text={question.text}
+          domain={domainLabel(question.domainCode)}
+          text={question.content}
           bodyKey={question.id}
           direction={direction}
           footer={
@@ -205,7 +206,7 @@ export default function ExamPage() {
           ) : null}
           <ChoiceList
             choices={question.choices}
-            selectedIds={picked}
+            selectedMarkers={picked}
             onSelect={selectChoice}
             answerCount={answerCount}
             graded={false}

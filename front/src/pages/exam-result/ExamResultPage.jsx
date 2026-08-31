@@ -9,6 +9,7 @@ import {
   isAnswerCorrect,
   toScaledScore,
 } from '../../features/exam/score.js'
+import { domainLabel } from '../../features/domains.js'
 import PageLoading from '../../components/PageLoading.jsx'
 import styles from './ExamResultPage.module.css'
 
@@ -18,7 +19,7 @@ export default function ExamResultPage() {
 
   useEffect(() => {
     if (!state) return
-    fetchQuestions(state.certCode).then(setQuestions)
+    fetchQuestions(state.examId).then(setQuestions)
   }, [state])
 
   // 새로고침하면 제출 내역이 사라진다. 서버에 회차를 저장하기 전까지는 다시 응시해야 한다.
@@ -38,7 +39,7 @@ export default function ExamResultPage() {
     return <PageLoading>채점하는 중이에요.</PageLoading>
   }
 
-  const { answers, certCode, flagged = {}, reason } = state
+  const { answers, examId, flagged = {}, reason } = state
   const flaggedCount = questions.filter((question) => flagged[question.id]).length
   const correctCount = countCorrect(questions, answers)
   const score = toScaledScore(correctCount, questions.length)
@@ -80,7 +81,9 @@ export default function ExamResultPage() {
             <li key={question.id} className={styles.item} data-correct={isCorrect}>
               <span className={styles.itemIndex}>{index + 1}</span>
               <span className={styles.itemBody}>
-                <span className={styles.itemDomain}>{question.domain}</span>
+                <span className={styles.itemDomain}>
+                  {domainLabel(question.domainCode)}
+                </span>
                 <span className={styles.itemVerdict}>
                   {picked.length > 0 ? (isCorrect ? '정답' : '오답') : '답하지 않음'}
                   {flagged[question.id] ? (
@@ -88,7 +91,7 @@ export default function ExamResultPage() {
                   ) : null}
                 </span>
               </span>
-              <Link className={styles.reviewLink} to={`/study?cert=${certCode}&q=${index}`}>
+              <Link className={styles.reviewLink} to={`/study?exam=${examId}&q=${index}`}>
                 AI와 복습
               </Link>
             </li>
@@ -98,7 +101,7 @@ export default function ExamResultPage() {
 
       {/* 결과를 다 읽은 뒤 갈 곳이 없으면 사이드바로 나가는 수밖에 없다 */}
       <div className={styles.actions}>
-        <Link className={styles.primaryLink} to={`/exam?cert=${certCode}`}>
+        <Link className={styles.primaryLink} to={`/exam?exam=${examId}`}>
           다시 응시하기
         </Link>
         <Link className={styles.secondaryLink} to="/dashboard">

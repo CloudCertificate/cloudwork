@@ -17,7 +17,7 @@ export default function StudyPage() {
   // q — 시험 결과에서 온 복습(그 문제 하나만)
   // session — 사이드바에서 연 지난 학습
   const chat = useStudyChat({
-    certCode: searchParams.get('cert'),
+    examId: searchParams.get('exam'),
     domain: searchParams.get('domain'),
     reviewIndex: searchParams.get('q'),
     sessionId: searchParams.get('session'),
@@ -75,7 +75,7 @@ export default function StudyPage() {
                   <QuestionContents
                     question={chat.questions[message.questionIndex]}
                     order={message.order}
-                    selectedIds={message.selectedIds}
+                    selectedMarkers={message.selectedMarkers}
                     graded={message.graded}
                     onSelect={(choiceId) => chat.selectChoice(message, choiceId)}
                     onSubmit={() => chat.submitAnswer(message)}
