@@ -13,3 +13,5 @@ DOMAINS = (
     {"code": "3", "name": "고성능 아키텍처 설계", "label": "고성능", "weight": 24},
     {"code": "4", "name": "비용에 최적화된 아키텍처 설계", "label": "비용 최적화", "weight": 20},
 )
+
+DOMAIN_CODES = frozenset(domain["code"] for domain in DOMAINS)

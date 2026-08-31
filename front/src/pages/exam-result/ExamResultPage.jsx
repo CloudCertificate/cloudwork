@@ -9,6 +9,7 @@ import {
   isAnswerCorrect,
   toScaledScore,
 } from '../../features/exam/score.js'
+import { domainLabel } from '../../features/domains.js'
 import PageLoading from '../../components/PageLoading.jsx'
 import styles from './ExamResultPage.module.css'
 
@@ -80,7 +81,9 @@ export default function ExamResultPage() {
             <li key={question.id} className={styles.item} data-correct={isCorrect}>
               <span className={styles.itemIndex}>{index + 1}</span>
               <span className={styles.itemBody}>
-                <span className={styles.itemDomain}>{question.domain}</span>
+                <span className={styles.itemDomain}>
+                  {domainLabel(question.domainCode)}
+                </span>
                 <span className={styles.itemVerdict}>
                   {picked.length > 0 ? (isCorrect ? '정답' : '오답') : '답하지 않음'}
                   {flagged[question.id] ? (

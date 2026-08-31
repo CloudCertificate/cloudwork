@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchQuestions } from '../../api/quiz.js'
 import { askTutor, buildGradeReply } from '../../api/tutor.js'
 import { isAnswerCorrect } from '../../features/exam/score.js'
-import { MARKERS } from '../../components/ChoiceList.jsx'
 
 // 한 세션이 무한정 길어지지 않도록 이쯤에서 마무리를 제안한다.
 const SESSION_QUESTION_LIMIT = 20
@@ -48,7 +47,7 @@ export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
           kind: 'question',
           questionIndex,
           order,
-          selectedIds: [],
+          selectedMarkers: [],
           graded: false,
         },
       ])
@@ -94,31 +93,33 @@ export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
   const currentQuestion = questionMessages[questionMessages.length - 1] ?? null
   const askedCount = questionMessages.length
 
-  function gradeAnswer(message, pickedIds) {
+  function gradeAnswer(message, pickedMarkers) {
     const question = questions[message.questionIndex]
-    const correct = isAnswerCorrect(question, pickedIds)
+    const correct = isAnswerCorrect(question, pickedMarkers)
 
-    const markerOf = (id) => MARKERS[question.choices.findIndex((c) => c.id === id)]
-    const correctIds = question.choices.filter((c) => c.correct).map((c) => c.id)
+    const label = (marker) => marker.toUpperCase()
+    const correctChoices = question.choices.filter((c) => c.correct)
     // 고른 것 중 틀린 것만 — 복수 정답에서 하나만 맞힌 경우 맞힌 보기는 여기 들어오면 안 된다
     const wrongChoices = question.choices.filter(
-      (c) => pickedIds.includes(c.id) && !c.correct,
+      (c) => pickedMarkers.includes(c.marker) && !c.correct,
     )
 
     setMessages((current) =>
       current.map((item) =>
-        item.id === message.id ? { ...item, selectedIds: pickedIds, graded: true } : item,
+        item.id === message.id
+          ? { ...item, selectedMarkers: pickedMarkers, graded: true }
+          : item,
       ),
     )
 
-    appendText('user', pickedIds.map((id) => markerOf(id)).join(', '))
+    appendText('user', pickedMarkers.map(label).join(', '))
     appendText(
       'ai',
       buildGradeReply({
         correct,
-        correctMarkers: correctIds.map(markerOf).join(', '),
-        correctChoices: question.choices.filter((c) => c.correct),
-        wrongMarkers: wrongChoices.map((c) => markerOf(c.id)).join(', '),
+        correctMarkers: correctChoices.map((c) => label(c.marker)).join(', '),
+        correctChoices,
+        wrongMarkers: wrongChoices.map((c) => label(c.marker)).join(', '),
         wrongChoices,
       }),
     )
@@ -140,7 +141,7 @@ export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
   function selectChoice(message, choiceId) {
     const question = questions[message.questionIndex]
     const answerCount = question.answerCount ?? 1
-    const picked = message.selectedIds
+    const picked = message.selectedMarkers
 
     let nextPicked
     if (answerCount === 1) nextPicked = [choiceId]
@@ -150,7 +151,7 @@ export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
 
     setMessages((current) =>
       current.map((item) =>
-        item.id === message.id ? { ...item, selectedIds: nextPicked } : item,
+        item.id === message.id ? { ...item, selectedMarkers: nextPicked } : item,
       ),
     )
 
@@ -158,7 +159,7 @@ export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
   }
 
   function submitAnswer(message) {
-    gradeAnswer(message, message.selectedIds)
+    gradeAnswer(message, message.selectedMarkers)
   }
 
   function askNextQuestion() {

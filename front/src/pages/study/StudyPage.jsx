@@ -75,7 +75,7 @@ export default function StudyPage() {
                   <QuestionContents
                     question={chat.questions[message.questionIndex]}
                     order={message.order}
-                    selectedIds={message.selectedIds}
+                    selectedMarkers={message.selectedMarkers}
                     graded={message.graded}
                     onSelect={(choiceId) => chat.selectChoice(message, choiceId)}
                     onSubmit={() => chat.submitAnswer(message)}

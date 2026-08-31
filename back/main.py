@@ -5,8 +5,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from core import config, database
+from core import config, database, errors
 from router import exam as exam_router
+from router import question as question_router
 
 
 @asynccontextmanager
@@ -27,6 +28,9 @@ app.add_middleware(
 )
 
 app.include_router(exam_router.router)
+app.include_router(question_router.router)
+
+errors.register(app)
 
 
 @app.get("/health")

@@ -1,4 +1,3 @@
-import { MARKERS } from '../../components/ChoiceList.jsx'
 import styles from './QuestionNav.module.css'
 
 /*
@@ -31,13 +30,13 @@ export default function QuestionNav({ questions, answers, flagged, currentIndex,
               >
                 <span className={styles.order}>{index + 1}.</span>
                 <span className={styles.marks}>
-                  {question.choices.map((choice, choiceIndex) => (
+                  {question.choices.map((choice) => (
                     <span
-                      key={choice.id}
+                      key={choice.marker}
                       className={styles.mark}
-                      data-picked={picked.includes(choice.id)}
+                      data-picked={picked.includes(choice.marker)}
                     >
-                      {MARKERS[choiceIndex]}
+                      {choice.marker.toUpperCase()}
                     </span>
                   ))}
                 </span>

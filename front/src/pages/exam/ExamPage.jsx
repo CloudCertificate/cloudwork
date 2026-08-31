@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { fetchExamSet } from '../../api/exam.js'
+import { domainLabel } from '../../features/domains.js'
 import QuestionCard from './QuestionCard.jsx'
 import ChoiceList from '../../components/ChoiceList.jsx'
 import QuestionNav from './QuestionNav.jsx'
@@ -155,8 +156,8 @@ export default function ExamPage() {
         <QuestionCard
           index={index}
           total={questions.length}
-          domain={question.domain}
-          text={question.text}
+          domain={domainLabel(question.domainCode)}
+          text={question.content}
           bodyKey={question.id}
           direction={direction}
           footer={
@@ -205,7 +206,7 @@ export default function ExamPage() {
           ) : null}
           <ChoiceList
             choices={question.choices}
-            selectedIds={picked}
+            selectedMarkers={picked}
             onSelect={selectChoice}
             answerCount={answerCount}
             graded={false}
