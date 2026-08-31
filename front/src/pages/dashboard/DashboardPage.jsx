@@ -119,7 +119,7 @@ export default function DashboardPage() {
             {weakest.name} 유형이 가장 약하네요.{' '}
             <Link
               className={styles.inlineLink}
-              to={`/study?cert=${history.certCode}&domain=${encodeURIComponent(weakest.name)}`}
+              to={`/study?exam=${history.examId}&domain=${encodeURIComponent(weakest.name)}`}
             >
               취약 유형 공부하기
             </Link>

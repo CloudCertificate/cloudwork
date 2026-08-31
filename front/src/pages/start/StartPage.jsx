@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchCertifications } from '../../api/certifications.js'
+import { fetchExams } from '../../api/exams.js'
 import OptionCard from '../../components/OptionCard.jsx'
 import PageLoading from '../../components/PageLoading.jsx'
 import styles from './StartPage.module.css'
@@ -12,20 +12,20 @@ const MODES = [
 
 export default function StartPage() {
   const navigate = useNavigate()
-  const [certifications, setCertifications] = useState(null)
-  const [certCode, setCertCode] = useState('')
+  const [exams, setExams] = useState(null)
+  const [examId, setExamId] = useState('')
   const [mode, setMode] = useState('')
 
   useEffect(() => {
-    fetchCertifications().then(setCertifications)
+    fetchExams().then(setExams)
   }, [])
 
   function handleSubmit(event) {
     event.preventDefault()
-    navigate(`/${mode}?cert=${certCode}`)
+    navigate(`/${mode}?exam=${examId}`)
   }
 
-  if (certifications === null) {
+  if (exams === null) {
     return <PageLoading>자격증 목록을 불러오는 중이에요.</PageLoading>
   }
 
@@ -36,21 +36,17 @@ export default function StartPage() {
       <form className={styles.form} onSubmit={handleSubmit}>
         <fieldset className={styles.group}>
           <legend className={styles.legend}>자격증</legend>
-          {certifications.map((certification) => (
+          {exams.map((exam) => (
             <OptionCard
-              key={certification.code}
-              name="certification"
-              value={certification.code}
-              checked={certCode === certification.code}
-              disabled={!certification.available}
-              onChange={(event) => setCertCode(event.target.value)}
-              label={
-                certification.available
-                  ? certification.name
-                  : `${certification.name} (준비 중)`
-              }
+              key={exam.id}
+              name="exam"
+              value={String(exam.id)}
+              checked={examId === String(exam.id)}
+              disabled={!exam.available}
+              onChange={(event) => setExamId(event.target.value)}
+              label={exam.available ? exam.name : `${exam.name} (준비 중)`}
               /* 실제 시험 기준이다. 지금 모의고사는 준비된 문항 수만큼 나오고 시간도 그만큼 준다 */
-              description={`실제 시험 ${certification.questionCount}문항 · ${certification.timeLimitMinutes}분`}
+              description={`실제 시험 ${exam.questionCount}문항 · ${exam.timeLimitMinutes}분`}
             />
           ))}
         </fieldset>
@@ -70,7 +66,7 @@ export default function StartPage() {
           ))}
         </fieldset>
 
-        <button className={styles.submit} type="submit" disabled={!certCode || !mode}>
+        <button className={styles.submit} type="submit" disabled={!examId || !mode}>
           시작하기
         </button>
       </form>

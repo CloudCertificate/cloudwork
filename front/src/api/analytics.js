@@ -4,7 +4,7 @@
  * 학습 기록은 AI 대화 맥락으로만 쓰고 여기 들어오지 않는다.
  */
 const EXAM_HISTORY = {
-  certCode: 'SAA-C03',
+  examId: 1,
   attempts: [
     { id: 1, date: '2026-07-12', score: 520, flaggedCount: 3 },
     { id: 2, date: '2026-07-19', score: 580, flaggedCount: 4 },

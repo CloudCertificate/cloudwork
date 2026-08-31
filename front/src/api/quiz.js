@@ -165,10 +165,10 @@ const QUESTIONS = [
 ]
 
 /* domain을 주면 그 유형 문제만 돌려준다 — 취약 유형 학습이 이 필터로 들어온다. */
-export function fetchQuestions(certCode, { domain } = {}) {
+export function fetchQuestions(examId, { domain } = {}) {
   const filtered = domain
     ? QUESTIONS.filter((question) => question.domain === domain)
     : QUESTIONS
 
-  return Promise.resolve(filtered.map((question) => ({ ...question, certCode })))
+  return Promise.resolve(filtered.map((question) => ({ ...question, examId })))
 }

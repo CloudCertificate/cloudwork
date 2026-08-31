@@ -14,7 +14,7 @@ const SESSION_QUESTION_LIMIT = 20
  *
  * 채점은 여기서 `correct` 필드로 판정하고 AI에게는 결과를 사실로 넘긴다(docs/product.md §2 ②).
  */
-export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
+export function useStudyChat({ examId, domain, reviewIndex, sessionId }) {
   const [questions, setQuestions] = useState(null)
   const [messages, setMessages] = useState([])
   const [waiting, setWaiting] = useState(false)
@@ -62,12 +62,12 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
    * 지난 대화를 실제로 불러오는 건 서버가 붙은 뒤다(지금은 어느 세션이든 새로 시작한다).
    */
   useEffect(() => {
-    const sessionKey = `${certCode}|${domain}|${reviewIndex}|${sessionId}`
+    const sessionKey = `${examId}|${domain}|${reviewIndex}|${sessionId}`
     if (startedFor.current === sessionKey) return
     startedFor.current = sessionKey
     setMessages([])
 
-    fetchQuestions(certCode, { domain }).then((loaded) => {
+    fetchQuestions(examId, { domain }).then((loaded) => {
       const requested = Number.parseInt(reviewIndex ?? '', 10)
       const isReview =
         Number.isInteger(requested) && requested >= 0 && requested < loaded.length
@@ -88,7 +88,7 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
         appendQuestion(0, 1)
       }
     })
-  }, [certCode, domain, reviewIndex, sessionId, appendText, appendQuestion])
+  }, [examId, domain, reviewIndex, sessionId, appendText, appendQuestion])
 
   const questionMessages = messages.filter((message) => message.kind === 'question')
   const currentQuestion = questionMessages[questionMessages.length - 1] ?? null
@@ -129,7 +129,10 @@ export function useStudyChat({ certCode, domain, reviewIndex, sessionId }) {
      * 세션 한도는 예외다. 여기서 끊지 않으면 세션 하나가 무한정 길어진다.
      */
     if (askedCount >= SESSION_QUESTION_LIMIT) {
-      appendText('ai', `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`)
+      appendText(
+        'ai',
+        `오늘 ${SESSION_QUESTION_LIMIT}문제나 푸셨어요. 여기서 마무리할까요?`,
+      )
     }
   }
 

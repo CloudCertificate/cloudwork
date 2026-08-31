@@ -1,5 +1,5 @@
 import { fetchQuestions } from './quiz.js'
-import { fetchCertification } from './certifications.js'
+import { fetchExam } from './exams.js'
 
 /*
  * 시험 세트. 서버가 생기기 전까지 학습용 문제를 그대로 쓴다.
@@ -10,19 +10,18 @@ import { fetchCertification } from './certifications.js'
  */
 const FALLBACK_SECONDS_PER_QUESTION = 120
 
-function toTimeLimitSeconds(questionCount, certification) {
-  if (certification === null) return questionCount * FALLBACK_SECONDS_PER_QUESTION
+function toTimeLimitSeconds(questionCount, exam) {
+  if (exam === null) return questionCount * FALLBACK_SECONDS_PER_QUESTION
 
-  const secondsPerQuestion =
-    (certification.timeLimitMinutes * 60) / certification.questionCount
+  const secondsPerQuestion = (exam.timeLimitMinutes * 60) / exam.questionCount
   return Math.round(questionCount * secondsPerQuestion)
 }
 
-export function fetchExamSet(certCode) {
-  return Promise.all([fetchQuestions(certCode), fetchCertification(certCode)]).then(
-    ([questions, certification]) => ({
+export function fetchExamSet(examId) {
+  return Promise.all([fetchQuestions(examId), fetchExam(examId)]).then(
+    ([questions, exam]) => ({
       questions,
-      timeLimitSeconds: toTimeLimitSeconds(questions.length, certification),
+      timeLimitSeconds: toTimeLimitSeconds(questions.length, exam),
     }),
   )
 }

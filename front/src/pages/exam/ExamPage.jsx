@@ -18,7 +18,7 @@ function formatTime(totalSeconds) {
 
 export default function ExamPage() {
   const [searchParams] = useSearchParams()
-  const certCode = searchParams.get('cert')
+  const examId = searchParams.get('exam')
   const navigate = useNavigate()
 
   const [examSet, setExamSet] = useState(null)
@@ -36,21 +36,21 @@ export default function ExamPage() {
   const dialogRef = useRef(null)
 
   useEffect(() => {
-    fetchExamSet(certCode).then((set) => {
+    fetchExamSet(examId).then((set) => {
       setExamSet(set)
       setRemainingSeconds(set.timeLimitSeconds)
       setDeadline(Date.now() + set.timeLimitSeconds * 1000)
     })
-  }, [certCode])
+  }, [examId])
 
   const submit = useCallback(
     (reason) => {
       navigate('/exam/result', {
         replace: true,
-        state: { certCode, answers, flagged, reason },
+        state: { examId, answers, flagged, reason },
       })
     },
-    [answers, certCode, flagged, navigate],
+    [answers, examId, flagged, navigate],
   )
 
   /*
